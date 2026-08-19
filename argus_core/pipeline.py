@@ -4,8 +4,6 @@ Kept free of printing so the Streamlit refresh button and `argus.py fetch` run
 exactly the same code path - one place for the logic, two front ends.
 """
 
-from __future__ import annotations
-
 import json
 import re
 import tomllib

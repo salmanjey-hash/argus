@@ -4,8 +4,6 @@ Every Item keeps the publisher's own words verbatim in `summary_raw`. Nothing in
 this pipeline paraphrases or invents text - see README "Evidence policy".
 """
 
-from __future__ import annotations
-
 import html
 import re
 import xml.etree.ElementTree as ET

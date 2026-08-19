@@ -9,8 +9,6 @@ Design notes:
   * Per-host rate limiting so we never hammer a regulator.
 """
 
-from __future__ import annotations
-
 import gzip
 import json
 import os

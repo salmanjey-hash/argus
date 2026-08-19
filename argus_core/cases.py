@@ -5,8 +5,6 @@ typologies.toml because one case usually illustrates several typologies, and
 because new cases get appended far more often than typologies change.
 """
 
-from __future__ import annotations
-
 import tomllib
 from dataclasses import dataclass, field
 from pathlib import Path

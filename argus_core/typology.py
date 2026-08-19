@@ -1,7 +1,5 @@
 """Typology library: load, match, explain, render."""
 
-from __future__ import annotations
-
 import html
 import textwrap
 import tomllib

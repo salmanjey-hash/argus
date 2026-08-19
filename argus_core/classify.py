@@ -8,8 +8,6 @@ Everything here is transparent - `argus.py why <id>` prints the exact terms that
 caused an item to score the way it did.
 """
 
-from __future__ import annotations
-
 import re
 from dataclasses import dataclass, field
 

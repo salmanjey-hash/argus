@@ -14,8 +14,6 @@ So drafts are extraction, not generation. The analyst turns quotes into prose;
 the tool never puts words in a regulator's mouth.
 """
 
-from __future__ import annotations
-
 import re
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
