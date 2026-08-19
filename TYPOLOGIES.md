@@ -1,6 +1,6 @@
 # FinCrime typology reference
 
-25 typologies, grouped by family. Every entry cites primary sources; run `python radar.py verify --typologies` to confirm each cited link is still live.
+25 typologies, grouped by family. Every entry cites primary sources; run `python argus.py verify --typologies` to confirm each cited link is still live.
 
 ## Contents
 
@@ -75,6 +75,10 @@ Criminal cash is deposited into the account of an innocent customer who is expec
 4. The broker keeps the legitimate overseas funds, which are now clean to them.
 5. Deposits are usually structured across branches to avoid attention.
 
+**Impact on banks**
+
+This typology is uniquely damaging because the account holder is innocent and cooperative, so standard 'ask the customer' controls return clean answers. Australian enforcement has shown regulators will penalise firms for missing it, and remediation is painful because it means revisiting customers who did nothing wrong.
+
 **Red flags**
 
 - Third-party cash deposits into a personal account where the holder expected a wire.
@@ -82,6 +86,14 @@ Criminal cash is deposited into the account of an innocent customer who is expec
 - Multiple small cash deposits matching the value of an expected remittance.
 - Customer cannot identify who made the deposit.
 - Pattern repeats across several unconnected customers using the same remitter corridor.
+
+**How to spot it**
+
+- Flag third-party cash deposits into personal accounts where the holder expected an inbound wire.
+- Alert on deposit location materially distant from the account holder's residence.
+- Look for multiple small cash deposits summing to the value of an expected remittance.
+- Investigate at remitter-corridor level, not per customer - the pattern repeats across unrelated holders.
+- Ask the customer directly how the funds arrived; unwitting customers usually answer openly.
 
 **What to do as the analyst**
 
@@ -108,6 +120,10 @@ Value moves between brokers who settle among themselves later, so no money cross
 4. Settlement through trade invoices makes this overlap directly with TBML.
 5. Criminal value can be injected into an otherwise legitimate remittance flow.
 
+**Impact on banks**
+
+Most informal value transfer is legitimate remittance serving communities that formal banking underserves, and blanket de-risking of the sector is itself a recognised regulatory harm. The bank's real exposure is unregistered operators and inadequate oversight of MSB customers, not the model itself.
+
 **Red flags**
 
 - Business account showing many small third-party credits and periodic large outbound transfers.
@@ -115,6 +131,14 @@ Value moves between brokers who settle among themselves later, so no money cross
 - Account activity inconsistent with the declared MSB customer base or corridor.
 - Bulk settlement payments to trading companies unrelated to the stated business.
 - Cash deposits followed by transfers to a small set of overseas counterparties.
+
+**How to spot it**
+
+- Check MSB registration and supervision status first - unregistered operation is the clearest signal.
+- Compare corridor volumes against the declared customer base and business size.
+- Flag many small third-party credits followed by periodic large outbound transfers.
+- Look for bulk settlement payments to trading companies unrelated to the stated business.
+- Review the MSB's own AML programme and agent oversight rather than exiting by default.
 
 **What to do as the analyst**
 
@@ -145,6 +169,10 @@ A bank provides accounts to another bank, whose own customers - and sometimes th
 4. Payable-through arrangements let respondent customers transact directly.
 5. Weak controls at any layer propagate straight to the correspondent.
 
+**Impact on banks**
+
+Correspondent relationships carry mandatory enhanced due diligence precisely because the correspondent serves parties it never onboarded. The largest AML penalties in banking history sit in this category, and the operational risk - loss of dollar clearing - can exceed the fine.
+
 **Red flags**
 
 - Payment volumes far exceeding the respondent's declared size or market.
@@ -152,6 +180,15 @@ A bank provides accounts to another bank, whose own customers - and sometimes th
 - Incomplete or stripped originator information in payment messages.
 - Respondent unwilling to disclose whether it permits nesting.
 - Sudden change in transaction mix or corridor without explanation.
+
+**How to spot it**
+
+- Ask explicitly whether the respondent permits nesting and obtain its AML programme.
+- Monitor payment volumes against the respondent's declared size and market footprint.
+- Alert on originator/beneficiary jurisdictions unrelated to the respondent's stated business.
+- Treat incomplete or stripped payment-message fields as a discrete red flag.
+- Use the Wolfsberg Correspondent Banking Due Diligence Questionnaire as the baseline.
+- Flag sudden changes in transaction mix or corridor without explanation.
 
 **What to do as the analyst**
 
@@ -178,6 +215,10 @@ Fast digital onboarding, distributed agent networks and payment-institution pass
 4. Passporting used to serve customers in markets the firm barely understands.
 5. Funds moved between e-money wallets to layer before hitting the banking system.
 
+**Impact on banks**
+
+Supervisory findings in this sector consistently concern onboarding controls and oversight of agents and distributors rather than exotic laundering methods. Fast growth plus remote onboarding plus passporting is the risk combination regulators look for, and enforcement here has been rising.
+
 **Red flags**
 
 - Bulk account openings sharing device, IP, or document template artefacts.
@@ -185,6 +226,15 @@ Fast digital onboarding, distributed agent networks and payment-institution pass
 - High proportion of accounts dormant then simultaneously activated.
 - Customer base concentrated in a market unrelated to the firm's stated strategy.
 - Wallet-to-wallet transfers with no apparent commercial purpose.
+
+**How to spot it**
+
+- Test document authenticity and liveness signals, not merely document presence.
+- Detect bulk openings sharing device fingerprints, IP ranges or document template artefacts.
+- Review agent-level volume against local population and plausible trade.
+- Flag cohorts of dormant accounts activating simultaneously.
+- Compare customer-base geography against the firm's stated strategy and risk assessment.
+- Monitor wallet-to-wallet transfers with no apparent commercial purpose.
 
 **What to do as the analyst**
 
@@ -215,6 +265,10 @@ Lawyers, accountants, formation agents and trust or company service providers le
 4. The professional's reputation is used to reassure a bank during onboarding.
 5. Advice is given on how to stay below thresholds or outside a supervisory perimeter.
 
+**Impact on banks**
+
+The UK National Risk Assessment repeatedly identifies professional services as a leading laundering channel, and supervision is consolidating under a single professional-services supervisor. For a bank the trap is reliance: treating a regulated intermediary's introduction as a substitute for your own CDD is the failure mode regulators criticise most often.
+
 **Red flags**
 
 - Funds through a client account with no corresponding legal or accounting service.
@@ -222,6 +276,14 @@ Lawyers, accountants, formation agents and trust or company service providers le
 - Documentation that is unusually polished but unverifiable at source.
 - Loan agreements between related parties at non-commercial terms.
 - Professional unable or unwilling to explain the commercial rationale for a structure.
+
+**How to spot it**
+
+- Question funds moving through a client account with no identifiable underlying legal or accounting matter.
+- Flag intermediaries who resist direct contact between the bank and the underlying client.
+- Check loan and consultancy agreements between connected parties for non-commercial terms.
+- Verify the professional's actual supervisory status and standing, not just their claim.
+- Look for unusually polished documentation that cannot be verified at source.
 
 **What to do as the analyst**
 
@@ -248,6 +310,10 @@ Legal persons with no genuine trading substance are used to hold accounts, own a
 4. The company opens bank accounts and receives payments with no matching commercial activity.
 5. Ownership is refreshed or the company is dissolved before scrutiny lands.
 
+**Impact on banks**
+
+Corporate opacity underlies most large laundering cases, and UK/EU reform has moved the expectation from 'we collected an ownership form' to 'we verified it'. With Companies House identity verification and the EU beneficial ownership regime, a bank that cannot evidence who controls its corporate customers is now visibly behind the standard.
+
 **Red flags**
 
 - Registered address shared with hundreds of other companies.
@@ -257,6 +323,15 @@ Legal persons with no genuine trading substance are used to hold accounts, own a
 - Ownership chain terminating in a secrecy jurisdiction or a bearer-share structure.
 - Company name closely mimics an established brand.
 - Formation agent is the only real point of contact.
+
+**How to spot it**
+
+- Flag registered addresses shared by an abnormally high number of companies.
+- Alert on companies transacting at high value within weeks of incorporation.
+- Check for directors holding dozens of appointments, or resident far from claimed operations.
+- Compare filed accounts and dormant status against actual account turnover.
+- Trace ownership to a natural person and record explicitly where and why the chain terminates.
+- Flag name similarity to established brands at onboarding.
 
 **What to do as the analyst**
 
@@ -288,6 +363,10 @@ Proceeds of bribery, embezzlement or state capture moved abroad by politically e
 4. Integration through property, luxury goods, art, private education and professional fees.
 5. Legitimising narrative built through consultancy income or a family business.
 
+**Impact on banks**
+
+PEP relationships are where source-of-wealth evidencing is tested hardest, and failures are reputationally severe because they attract press and parliamentary attention. Private banking and wealth management carry most of this exposure; the standard is a documented, career-length wealth narrative, not a transaction-level explanation.
+
 **Red flags**
 
 - Wealth accumulated rapidly during or shortly after public office.
@@ -296,6 +375,15 @@ Proceeds of bribery, embezzlement or state capture moved abroad by politically e
 - Family members holding assets disproportionate to their own careers.
 - Reluctance to identify the connection to the public official.
 - Adverse media alleging corruption, even without charge or conviction.
+
+**How to spot it**
+
+- Evidence source of wealth across a career, not source of funds for one transaction.
+- Screen close associates and family members, not only the named official.
+- Flag payments from state-owned entities or government contracts into personal structures.
+- Test whether declared role and remuneration plausibly support observed assets.
+- Treat credible adverse media as a risk input requiring a documented decision either way.
+- Record the rationale for retaining the relationship as carefully as for exiting it.
 
 **What to do as the analyst**
 
@@ -327,6 +415,10 @@ Exploitation generates cash and leaves distinctive financial fingerprints: contr
 4. Deductions for 'accommodation' and 'transport' strip the victim's earnings.
 5. Proceeds laundered through cash-intensive businesses such as car washes or nail bars.
 
+**Impact on banks**
+
+Banks are frequently the only institution positioned to see the financial pattern, and UK reviews following major prosecutions have criticised underuse of branch-level observation. Exposure is both regulatory and reputational, and it intersects with modern slavery reporting obligations.
+
 **Red flags**
 
 - Several unrelated customers sharing one address or contact number.
@@ -335,6 +427,15 @@ Exploitation generates cash and leaves distinctive financial fingerprints: contr
 - Limited language ability combined with a third party controlling the conversation.
 - Benefit payments across multiple accounts routed to a single beneficiary.
 - Low-value transactions at locations far from the stated home address.
+
+**How to spot it**
+
+- Cluster the book by address, phone number and device - this is invisible per-account.
+- Flag salary credits from one employer across many accounts, each swept the same day.
+- Record instances where a third party accompanies and answers for a customer at onboarding.
+- Look for benefit payments across multiple accounts routing to a single beneficiary.
+- Flag transactions at locations far from the stated home address.
+- Route through vulnerability protocols alongside the SAR - and never tip off.
 
 **What to do as the analyst**
 
@@ -365,6 +466,10 @@ The victim is deceived into authorising the payment themselves, which is what ma
 4. Funds are received by a mule account and dispersed within minutes to hours.
 5. Onward layering through crypto, overseas transfer, or high-value goods.
 
+**Impact on banks**
+
+Under UK reimbursement rules the cost of APP fraud is shared between sending and receiving firms, which makes inbound detection a balance-sheet issue as well as a compliance one. Receiving banks are expected to spot mule accounts before the money leaves, and the regulator publishes firm-level performance data, so this is reputational too.
+
 **Red flags**
 
 - Beneficiary account is new and receiving its first large credit.
@@ -372,6 +477,14 @@ The victim is deceived into authorising the payment themselves, which is what ma
 - Victim-side: unusual payment to a new payee, out of pattern in size and urgency.
 - Beneficiary immediately disperses to multiple onward accounts.
 - Multiple unrelated payers crediting the same beneficiary in a short window.
+
+**How to spot it**
+
+- Prioritise first-credit-on-new-account alerts for immediate review, not batch review.
+- Treat Confirmation of Payee mismatches as a KYC signal and retain them for pattern analysis.
+- Flag beneficiaries receiving credits from multiple unrelated payers in a short window.
+- On the sending side, alert on a new payee paid an unusually large amount out of pattern.
+- Watch for immediate onward dispersal or cash withdrawal after an inbound credit.
 
 **What to do as the analyst**
 
@@ -398,6 +511,10 @@ An attacker compromises or spoofs business email to redirect a genuine payment t
 4. Funds land in a corporate-looking account, often named similarly to the real supplier.
 5. Rapid dispersal onward before the discrepancy is noticed.
 
+**Impact on banks**
+
+BEC is among the highest-value fraud categories by loss, and the receiving bank is where it can be stopped. Recovery windows are measured in hours, so detection latency is the controlling variable. Corporate banking onboarding is the exposure point.
+
 **Red flags**
 
 - Newly opened business account named similarly to an established company.
@@ -405,6 +522,14 @@ An attacker compromises or spoofs business email to redirect a genuine payment t
 - Beneficiary account jurisdiction differs from the supplier's known location.
 - Immediate onward transfer or cash withdrawal after credit.
 - Account signatory profile inconsistent with the claimed trading activity.
+
+**How to spot it**
+
+- Flag new business accounts whose name closely resembles an established company.
+- Alert on a large first credit from an unrelated corporate payer into a young account.
+- Check beneficiary jurisdiction against the supplier's known operating location.
+- Escalate immediate onward transfer or cash withdrawal after a large corporate credit.
+- Compare signatory profile against the claimed trading activity.
 
 **What to do as the analyst**
 
@@ -431,6 +556,10 @@ A customer or business builds a good credit record over months, obtains rising l
 4. Payments made with cheques or transfers that later fail, temporarily inflating available credit.
 5. Simultaneous maximum drawdown across all facilities, then abandonment.
 
+**Impact on banks**
+
+Losses are concentrated and sudden, and the long well-behaved build-up defeats monitoring tuned to immediate anomalies. Credit and financial crime teams often own different halves of the signal, which is why it is missed - the detection requires joining them.
+
 **Red flags**
 
 - Sudden full utilisation after a long period of modest, tidy use.
@@ -438,6 +567,15 @@ A customer or business builds a good credit record over months, obtains rising l
 - Multiple applications across institutions in a short window.
 - Contact details changed shortly before the drawdown.
 - Business showing turnover with no corresponding supplier or wage payments.
+
+**How to spot it**
+
+- Monitor for behaviour change against the customer's own baseline, not absolute thresholds.
+- Flag sudden full utilisation after a long period of modest, tidy use.
+- Alert on failed or reversed inbound payments shortly followed by drawdown.
+- Watch for clustered limit-increase requests across the market via bureau data.
+- Flag contact-detail changes shortly before significant drawdown.
+- Question business turnover with no corresponding supplier or wage payments.
 
 **What to do as the analyst**
 
@@ -464,6 +602,10 @@ A long-term relationship is built with the victim before a fake investment - usu
 4. Small withdrawals are permitted early to build confidence.
 5. Escalating deposits, then 'tax' or 'release fee' demands, then loss of contact.
 
+**Impact on banks**
+
+These frauds produce repeat losses from a single customer over months and often involve vulnerable people, so they engage consumer duty and vulnerability obligations alongside financial crime ones. Many scam operations run on trafficked labour, which adds a human-rights dimension to the bank's exposure.
+
 **Red flags**
 
 - Older or recently bereaved customer making escalating payments to a crypto exchange.
@@ -471,6 +613,14 @@ A long-term relationship is built with the victim before a fake investment - usu
 - New payee added then paid repeatedly at increasing amounts.
 - Borrowing, pension release, or asset sale to fund 'investment'.
 - Payments to a platform with no regulatory authorisation.
+
+**How to spot it**
+
+- Flag escalating payments to a newly added payee, especially toward crypto exchanges.
+- Alert on borrowing, pension release or asset sale immediately preceding transfers.
+- Check whether the destination platform holds any regulatory authorisation.
+- Treat customer resistance to branch discussion as a signal, not a resolution.
+- Build intervention around evidence - expect the customer to deny and defend the scheme.
 
 **What to do as the analyst**
 
@@ -501,6 +651,10 @@ Gambling converts cash into an apparently legitimate win, and betting markets al
 4. Account-to-account transfers within a gambling platform used as a payment rail.
 5. In-game items or currency bought and resold on secondary markets.
 
+**Impact on banks**
+
+Casinos and gambling operators are regulated AML entities in their own right, and Australian enforcement has produced penalties in the hundreds of millions. For banks the exposure is both banking these operators and processing customer transactions whose merchant category may not reflect actual activity.
+
 **Red flags**
 
 - Large deposits with minimal actual play before withdrawal.
@@ -508,6 +662,14 @@ Gambling converts cash into an apparently legitimate win, and betting markets al
 - Withdrawal requested to a different payment method or party than the deposit.
 - Customer income cannot support the deposit volume.
 - Frequent deposits and withdrawals with near-neutral net position.
+
+**How to spot it**
+
+- Measure deposit-to-play ratio - large deposits with minimal play then withdrawal is the core signal.
+- Require withdrawals to return to the original funding instrument.
+- Look for account pairs with mirrored or matched betting patterns and near-neutral net position.
+- Test merchant category and payment narrative against the underlying activity.
+- Compare deposit volume against declared customer income.
 
 **What to do as the analyst**
 
@@ -534,6 +696,10 @@ Property absorbs large sums in a single transaction, holds value, and is sociall
 4. Renovation costs inflated to absorb further cash.
 5. Rapid resale ('flipping') or refinancing to convert the asset back to clean funds.
 
+**Impact on banks**
+
+Property is the main integration route for foreign proceeds entering the UK and EU, and the register of overseas entities plus unexplained wealth order powers mean banks and conveyancers are expected to evidence source of funds properly. Mortgage and private banking teams carry the exposure.
+
 **Red flags**
 
 - Buyer is an overseas entity whose beneficial owner cannot be established.
@@ -542,6 +708,15 @@ Property absorbs large sums in a single transaction, holds value, and is sociall
 - Cash purchase with no mortgage where the buyer's profile suggests financing would be normal.
 - Buyer indifferent to price, condition, or rental yield.
 - Quick resale at a materially different price without works.
+
+**How to spot it**
+
+- Establish the beneficial owner of any corporate buyer before assessing the funds.
+- Compare purchase price against comparable local transactions; flag material divergence.
+- Reconcile source-of-funds documents to the actual payment path, not just a closing balance.
+- Flag funds arriving from multiple third parties or unrelated jurisdictions.
+- Check overseas entity registration status where the regime requires it.
+- Query rapid resale at materially different value without works.
 
 **What to do as the analyst**
 
@@ -572,6 +747,10 @@ Third parties let their personal accounts be used to receive and forward crimina
 4. Funds are forwarded within hours to a second-tier mule, crypto exchange, or overseas account.
 5. The account is abandoned or the mule is 'burned' once flagged.
 
+**Impact on banks**
+
+Mule accounts are the single largest driver of inbound fraud-proceeds risk for retail banks and e-money firms, and they sit squarely in your onboarding and monitoring controls. Reimbursement regimes have shifted cost toward receiving institutions, so a weak mule detection capability is now a direct financial loss, not just a regulatory one.
+
 **Red flags**
 
 - New account, minimal profile, sudden inbound credits from unrelated third parties.
@@ -581,6 +760,15 @@ Third parties let their personal accounts be used to receive and forward crimina
 - Device or IP shared across multiple otherwise unconnected customers.
 - Account opened shortly before first suspicious credit.
 - Customer cannot explain the source or the payer when asked.
+
+**How to spot it**
+
+- Alert on first large credit into a recently opened account from an unrelated third party.
+- Measure funds residency - inbound and near-identical outbound within hours is the core signal.
+- Flag accounts whose balance repeatedly returns to near zero after activity.
+- Run device, IP and phone-number linkage across the customer base to find rings.
+- Compare credit volume against declared income, especially for students and new-to-bank customers.
+- Cluster on shared beneficiary details across nominally unconnected accounts.
 
 **What to do as the analyst**
 
@@ -612,6 +800,10 @@ Criminal cash is mixed with the genuine takings of a business that legitimately 
 4. Profits are extracted as dividends, wages, or loans to connected parties.
 5. Multiple such businesses may be run in parallel under different owners.
 
+**Impact on banks**
+
+Cash-based laundering is consistently identified as a leading domestic risk in the UK National Risk Assessment, and it is the typology behind the largest UK AML enforcement action to date. For banks the exposure is SME business banking, where onboarding assumptions are rarely refreshed against actual behaviour.
+
 **Red flags**
 
 - Takings materially above what floor space, staffing or opening hours could plausibly generate.
@@ -620,6 +812,15 @@ Criminal cash is mixed with the genuine takings of a business that legitimately 
 - Wages paid to staff who cannot be evidenced, or minimal supplier payments.
 - Business acquired for cash by an owner with no sector experience.
 - Deposits in worn, banded, or unusually denominated notes.
+
+**How to spot it**
+
+- Benchmark card-to-cash ratio against sector norms - this is the single strongest test.
+- Compare banked takings against premises size, staffing and opening hours.
+- Flag deposits that show no seasonal variation where the sector should show one.
+- Reconcile declared turnover against filed accounts and VAT position.
+- Check for minimal supplier or wage payments alongside high takings.
+- Refresh expected-turnover assumptions periodically rather than only at onboarding.
 
 **What to do as the analyst**
 
@@ -646,6 +847,10 @@ Cash is broken into amounts small enough to sit below a reporting or scrutiny th
 4. Funds are consolidated upward into a single account once placed.
 5. Increasingly done through cash-accepting ATMs and retail agents rather than branches.
 
+**Impact on banks**
+
+Cash structuring is the classic placement risk for any bank with a branch or ATM network, and it is the failure regulators find easiest to evidence after the fact because the pattern sits in your own data. Post-NatWest, UK firms are also exposed to the argument that ignoring an obvious aggregate pattern is a criminal-standard failure, not just a civil one.
+
 **Red flags**
 
 - Repeated deposits just under a round threshold (e.g. repeated GBP 9,000s).
@@ -654,6 +859,15 @@ Cash is broken into amounts small enough to sit below a reporting or scrutiny th
 - Customer asks staff what the reporting threshold is, or splits a transaction when told.
 - Deposit pattern inconsistent with the customer's stated income or business takings.
 - Immediate onward transfer of the consolidated balance.
+
+**How to spot it**
+
+- Aggregate deposits by customer by rolling day/week, not per transaction - structuring is invisible at transaction level.
+- Alert on repeated deposits landing just under a reporting or internal review threshold.
+- Flag same-day deposits made at three or more distinct branches or ATMs.
+- Compare cash-in totals against declared income or expected turnover captured at onboarding.
+- Watch for consolidation: several accounts feeding one, then a single onward transfer.
+- Check whether the deposit locations cluster far from the customer's registered address.
 
 **What to do as the analyst**
 
@@ -685,11 +899,24 @@ Not a typology, but the machinery every typology ends in. Under POCA a person in
 5. Statutory notice and moratorium periods govern how long the firm must wait.
 6. Tipping off the customer, or prejudicing an investigation, is a separate offence.
 
+**Impact on banks**
+
+SAR quality directly affects law enforcement outcomes, and the UKFIU has been explicit that poor narratives and missing glossary codes reduce intelligence value. Failure to report, and tipping off, are criminal offences for individuals as well as firms - this is personal liability, not just institutional.
+
 **Red flags**
 
 - Suspicion is knowledge or suspicion - it is a lower bar than proof, and does not require certainty.
 - Do not delay a report to gather more evidence than the threshold requires.
 - A poor-quality SAR with no glossary code or clear narrative reduces its intelligence value.
+
+**How to spot it**
+
+- Report on suspicion - a lower bar than proof. Do not delay to gather more than the threshold requires.
+- Write the narrative so a reader outside your firm can follow it without access to your systems.
+- Apply current UKFIU glossary codes - they determine how the report is routed.
+- Track DAML statutory notice and moratorium periods against your action dates.
+- Record your reasoning where you decide not to report, as carefully as where you do.
+- Manage the customer relationship carefully - never disclose that a report has been made.
 
 **What to do as the analyst**
 
@@ -721,6 +948,10 @@ Financing the acquisition of goods, technology or expertise for weapons programm
 4. Overseas representatives operate under diplomatic or commercial cover.
 5. IT contracting and crypto theft used to generate revenue for sanctioned programmes.
 
+**Impact on banks**
+
+UK firms have an explicit obligation to assess proliferation financing risk in their business-wide risk assessment - it is a named requirement, not an optional extension of sanctions work. The end use is a weapons programme, so escalation is immediate and the tolerance is zero.
+
 **Red flags**
 
 - Dual-use goods shipped to an end user with no plausible civilian need.
@@ -728,6 +959,15 @@ Financing the acquisition of goods, technology or expertise for weapons programm
 - Trading company incorporated recently in a transhipment hub.
 - Payment routing disproportionately complex for the transaction value.
 - Remote IT workers with document inconsistencies and payment to third parties.
+
+**How to spot it**
+
+- Assess proliferation financing explicitly in the business-wide risk assessment and evidence it.
+- Screen goods descriptions and end users, not only counterparty names.
+- Flag dual-use goods shipped to end users with no plausible civilian need.
+- Question generic or unverifiable end-user certificates.
+- Flag trading companies recently incorporated in transhipment hubs.
+- Check remote-worker payment instructions directing funds to unrelated third parties.
 
 **What to do as the analyst**
 
@@ -754,6 +994,10 @@ Designated persons and entities continue to access the financial system through 
 4. Payment messages altered or stripped to conceal the true originator.
 5. Use of crypto, barter, or informal value transfer to bypass correspondent rails entirely.
 
+**Impact on banks**
+
+Sanctions breach is strict liability - the risk-based judgement that governs AML does not apply. Exposure includes secondary sanctions and, for dollar-clearing banks, potential loss of market access. Since 2022 this has been the fastest-moving supervisory area in the UK and EU.
+
 **Red flags**
 
 - Ownership restructured to just under a designation threshold shortly after listing.
@@ -762,6 +1006,15 @@ Designated persons and entities continue to access the financial system through 
 - Counterparty registered days before the transaction.
 - Customer resists questions about end-user or ultimate destination.
 - Dual-use or controlled goods with a civilian cover story.
+
+**How to spot it**
+
+- Screen on ownership and control, not name matching alone - control can exist below equity thresholds.
+- Re-screen the entire book after every list change, not only at onboarding.
+- Flag ownership restructured to just below a designation threshold shortly after a listing.
+- Alert on new intermediaries appearing in previously direct trade relationships.
+- Question goods or payments routed through third countries with no commercial logic.
+- Check whether an OFSI licence is required before any action that could constitute dealing.
 
 **What to do as the analyst**
 
@@ -790,6 +1043,10 @@ Ageing tankers with opaque ownership, uncertain insurance and disabled tracking 
 5. Attestations of price-cap compliance provided by parties with no real visibility.
 6. Insurance obtained from providers outside established markets.
 
+**Impact on banks**
+
+Exposure reaches banks through shipping companies, charterers, commodity traders, insurers and payment intermediaries rather than through vessels directly. Price-cap attestation regimes place a documentation burden on financial institutions, and OFSI has made clear that accepting an attestation uncritically is not compliance.
+
 **Red flags**
 
 - Counterparty is a newly formed single-vessel company with no trading history.
@@ -798,6 +1055,15 @@ Ageing tankers with opaque ownership, uncertain insurance and disabled tracking 
 - Price attestations that are generic or unverifiable.
 - Insurance from an unfamiliar provider in a non-standard jurisdiction.
 - Charterer or trader incorporated shortly before the voyage.
+
+**How to spot it**
+
+- Screen vessel names and IMO numbers, not only corporate counterparty names.
+- Flag newly formed single-vessel companies with no trading history.
+- Check for AIS gaps coinciding with loading windows.
+- Test cargo origin documentation against voyage data for consistency.
+- Ask who provided a price attestation and on what basis - a signature is not evidence.
+- Review registry and flag-state changes in the preceding 12 months.
 
 **What to do as the analyst**
 
@@ -828,6 +1094,10 @@ Charitable structures move funds to conflict zones with a humanitarian cover sto
 4. Only part of the funds is diverted, so accounts broadly reconcile.
 5. Cash couriers or informal transfer used for the final leg.
 
+**Impact on banks**
+
+FATF is explicit that the NPO sector must not be treated as uniformly high risk, and over-broad de-risking is itself a recognised harm that supervisors will criticise. The bank's obligation is targeted, proportionate measures - which is harder than a blanket policy and needs to be evidenced.
+
 **Red flags**
 
 - Beneficiary organisations that cannot be verified as existing.
@@ -835,6 +1105,15 @@ Charitable structures move funds to conflict zones with a humanitarian cover sto
 - Large cash collections with weak record-keeping.
 - Trustees with adverse media or links to designated entities.
 - Rapid growth in donations without a matching fundraising campaign.
+
+**How to spot it**
+
+- Verify overseas partner organisations, not only the UK/EU registered charity.
+- Check registration and trustee details against the relevant charity regulator.
+- Flag activity in conflict zones inconsistent with the charity's registered objects.
+- Question large cash collections with weak record-keeping.
+- Screen trustees for adverse media and links to designated entities.
+- Document why measures are proportionate - blanket exit is a supervisory risk in itself.
 
 **What to do as the analyst**
 
@@ -865,6 +1144,10 @@ Value is moved across borders by lying about a trade, not by moving money that l
 4. Phantom shipping: no goods move at all; documents alone justify the payment.
 5. Black market peso-style exchange: a broker settles obligations in two currencies, so no cross-border transfer ever appears.
 
+**Impact on banks**
+
+Trade finance is high-value, document-driven and split across correspondent banks, so no single institution sees the whole picture. Supervisors expect banks financing trade to test documents against economic reality, not just check they exist. Failures here are expensive because volumes are large and the paper trail makes remediation look like negligence in hindsight.
+
 **Red flags**
 
 - Invoice value materially out of line with public market prices for that commodity.
@@ -875,6 +1158,15 @@ Value is moved across borders by lying about a trade, not by moving money that l
 - Company's declared line of business does not fit the goods traded.
 - Round-number invoices and same-day back-to-back settlement.
 - Shipment routed via a free trade zone with no value added there.
+
+**How to spot it**
+
+- Compare declared unit price against a public commodity index; flag deviations beyond a set tolerance.
+- Reconcile the goods description on the invoice against the counterparty's registered business activity (SIC/NACE).
+- Flag amendments to letters of credit that change value, quantity or consignee more than once.
+- Check the routing: shipments through a country with no commercial connection to buyer or seller.
+- Look for third-party payers settling a trade they are not party to.
+- Cross-reference vessel and IMO data against the claimed voyage where shipping documents are provided.
 
 **What to do as the analyst**
 
@@ -906,6 +1198,10 @@ Value is moved onto a blockchain, obfuscated, then cashed out. The ledger is pub
 4. Layering through mixers, privacy coins, or large numbers of intermediate addresses ('peel chains').
 5. Cash-out via an exchange in a weak-supervision jurisdiction, a P2P trader, or a crypto ATM.
 
+**Impact on banks**
+
+With cryptoasset firms moving into full FSMA authorisation in the UK and MiCA plus the Travel Rule applying in the EU, crypto exposure is now a supervised activity rather than an emerging risk. Banks serving crypto businesses inherit their customers' controls, and blockchain analytics means exposure is demonstrable after the fact - which cuts both ways.
+
 **Red flags**
 
 - Customer's fiat account funds a crypto exchange immediately after third-party credits.
@@ -914,6 +1210,15 @@ Value is moved onto a blockchain, obfuscated, then cashed out. The ledger is pub
 - Use of an exchange with no meaningful KYC, or a VASP not registered where required.
 - Transfers to unhosted wallets that then fragment immediately.
 - Customer's crypto activity is far out of line with declared income or investment profile.
+
+**How to spot it**
+
+- Treat the fiat on-ramp and off-ramp as the control point - that is where you have visibility.
+- Score blockchain analytics exposure to mixers, darknet markets and designated addresses; record hop distance.
+- Verify the counterparty VASP is registered or authorised in its own jurisdiction.
+- Flag fiat accounts funding exchanges immediately after third-party credits.
+- Record Travel Rule originator/beneficiary data completeness as a risk signal.
+- Compare crypto activity against declared income and investment profile.
 
 **What to do as the analyst**
 
@@ -939,12 +1244,24 @@ Services and assets designed to sever the link between source and destination on
 3. CoinJoin-style collaborative transactions blend inputs from multiple parties.
 4. Output is withdrawn in varied amounts and delays to defeat timing correlation.
 
+**Impact on banks**
+
+Since OFAC designated a major mixing service, mixer exposure stopped being purely an AML risk score and became a potential sanctions breach - which is strict liability. Firms need a documented, consistent policy on direct versus indirect exposure, because inconsistent case-by-case decisions are indefensible under supervisory review.
+
 **Red flags**
 
 - Any direct or one-hop exposure to a designated mixing service.
 - Funds arriving from a mixer immediately before an attempted fiat withdrawal.
 - Customer explanation for privacy-coin use that does not fit their profile.
 - Structured withdrawals in irregular amounts shortly after a mixing event.
+
+**How to spot it**
+
+- Screen for direct exposure to designated mixing services and escalate immediately as sanctions, not AML.
+- Record hop distance from the mixer rather than a binary exposed/not-exposed flag.
+- Apply a documented threshold for indirect exposure and apply it consistently.
+- Flag funds arriving from a mixer shortly before a fiat withdrawal attempt.
+- Question privacy-coin activity that does not fit the customer's stated profile.
 
 **What to do as the analyst**
 

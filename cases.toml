@@ -522,8 +522,13 @@ Test whether the merchant category and payment narrative match the underlying ac
 For gambling customers, the ratio of deposits to actual play is the single most useful
 signal - money in and straight out with minimal turnover is not gambling, it is
 laundering."""
+verify_note = """
+austrac.gov.au did not respond from the network this library was built on - the whole
+host timed out, while other Australian government domains resolved normally. That looks
+like a geo or firewall block rather than a dead page, but it was NOT machine-verified.
+Open it in a browser before relying on it."""
 [[case.sources]]
-title = "AUSTRAC - Crown Resorts ordered to pay A$450 million penalty"
+title = "AUSTRAC - Crown Resorts ordered to pay A$450 million penalty (not machine-verified - see note)"
 url = "https://www.austrac.gov.au/news-and-media/media-release/crown-ordered-pay-450-million-penalty"
 
 # ---------------------------------------------------------------------------

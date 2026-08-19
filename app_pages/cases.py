@@ -79,6 +79,9 @@ for c in shown:
                 st.markdown("#### The analyst lesson")
                 st.write(c["analyst_lesson"])
 
+            if c.get("verify_note"):
+                st.warning(c["verify_note"], icon=":material/link_off:")
+
             st.markdown("#### Sources")
             links = st.container(horizontal=True, vertical_alignment="center")
             with links:

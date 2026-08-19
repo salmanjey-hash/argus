@@ -1,261 +1,275 @@
-# FinCrime Radar
+# Argus
 
-An AML/KYC regulatory and typology monitor for a working KYC analyst.
+**Financial crime intelligence, always watching.**
 
-It polls UK, EU and global financial-crime sources every day, filters out the
-noise, cross-references what it finds against a built-in typology reference,
-and gives you a short Markdown digest plus a searchable offline dashboard.
+An AML/KYC regulatory and typology monitor for a working KYC analyst. It polls
+UK, EU and global financial-crime sources, filters the noise, cross-references
+what it finds against a typology reference with real case studies, and serves
+the lot as a searchable app with a live refresh button.
 
-**Cost: nothing.** No API keys, no subscriptions, no `pip install`. It uses only
-the Python standard library and free public feeds.
+**Cost: nothing.** No API keys, no subscriptions, no paid data. The only
+dependency is Streamlit for the app — the monitoring engine itself is pure
+Python standard library.
 
 ---
 
 ## Quick start
 
 ```bash
-cd C:\Users\salma\Projects\fincrime-radar
-python radar.py run
+pip install -r requirements.txt
 ```
 
-That fetches, writes today's digest to `digests/`, builds `dashboard.html`, and
-opens it. That single command is the whole daily routine.
+```bash
+python argus.py app
+```
 
-Requires Python 3.11 or newer (you have 3.14). Nothing else.
+That opens the app in your browser. Hit **Refresh now** on the news feed and it
+pulls the latest from every source — about a minute the first time.
+
+Requires Python 3.11+ (you have 3.14).
 
 ---
 
-## The daily loop
+## What's in it
 
-| When | Command | Takes |
-|---|---|---|
-| Every morning | `python radar.py run` | ~1 min to run, ~5 min to read |
-| Friday | `python radar.py digest --weekly` | rolling 7-day rollup |
-| When something looks unfamiliar | `python radar.py explain <typology>` | instant |
-| Monthly | `python radar.py run --full` | includes weekly-cadence sources |
-| Monthly | `python radar.py verify` | confirms citations are still live |
+### 1. News feed — live
+Regulatory changes, enforcement actions, sanctions updates and financial crime
+news from 25 sources, newest first, filtered to what actually matters to a KYC
+analyst. Every item links straight to the original source.
+
+- **Refresh now** re-polls every source on demand and streams progress per source.
+- **Auto** re-checks every 15 minutes while the tab is open.
+- **Include weekly sources** adds the low-frequency ones (FATF, AMLA,
+  OpenSanctions) — slower, use it once a week.
+- Filter by jurisdiction, category and priority; search across headlines,
+  summaries and typologies.
+
+### 2. Typologies — 25 of them
+Every method in the library gets:
+
+| Section | What it gives you |
+|---|---|
+| **What it is** | The mechanism in plain English |
+| **How it works** | Step by step |
+| **Impact on banks** | Why it costs money and attracts regulators |
+| **Red flags** | What you'd observe |
+| **How to spot it** | Concrete detection — what to query, aggregate and alert on |
+| **What to do** | The analyst's next move |
+| **The real case** | A documented case with its backstory |
+| **Sources** | Primary documents |
+
+Typologies also show **how many recent news items matched them**, so the
+reference links back to what's happening now.
+
+### 3. Case library — 15 documented cases
+Real matters with the story behind them: NatWest/Fowler Oldfield, Danske Bank
+Estonia, Bitfinex, BNP Paribas, Deutsche Bank mirror trading, 1MDB, Operation
+Fort, Wachovia, the Panama and Pandora Papers, Tornado Cash, and more. Each
+gives you backstory, what happened, impact on banks, the analyst lesson, and
+primary sources.
+
+### 4. New & emerging
+Items that describe a *method* — a typology, modus operandi, red flag or
+emerging trend — but match nothing in the library. A review queue for you.
+
+**It deliberately does not auto-write typology entries.** Argus can reliably
+tell you "this is describing a technique we hold nothing on" by matching
+language patterns. Writing the entry itself would mean generating content,
+which is exactly what the rest of this tool avoids. You read the source, decide
+if it's genuinely new, and add it.
+
+### 5. Sources
+Which sources are responding, which are failing, and why.
+
+---
+
+## Evidence policy
+
+This matters most for your job, so it's worth being precise.
+
+**There is no LLM anywhere in this pipeline.** Classification is a transparent
+keyword rule engine in `argus_core/classify.py`. That's a deliberate design
+choice, not a cost compromise: a rule engine cannot invent a fact that wasn't in
+the source.
+
+- **Every item links to its original source.** The link comes from the feed
+  itself; it is never constructed.
+- **Summaries are the publisher's own words**, verbatim and truncated. Where a
+  source published no description, it says so rather than filling the gap.
+- **Every scoring decision is inspectable** — `python argus.py why <id>` prints
+  the exact terms that caused an item to be kept, categorised and prioritised.
+- **Citations are machine-checkable** — `python argus.py verify` re-fetches
+  every URL cited in the typology and case libraries and reports its status.
+- **Case studies are compiled from public reporting**, with headline facts
+  checked against primary sources when written. The linked source is the
+  authority — read it before relying on any detail.
+- **Where a citation could not be verified, it says so.** The AUSTRAC link on
+  the Crown/Star case is flagged in the app because that host was unreachable
+  from the build network. Nothing is quietly presented as verified when it isn't.
+
+If you want an interpretation layer, `python argus.py brief` writes a
+paste-ready prompt with the collected items and links, for you to hand to Claude
+yourself. The tool never calls a paid API on its own.
 
 ---
 
 ## Commands
 
 ```bash
-python radar.py run                 # fetch + digest + dashboard (the daily one)
-python radar.py fetch               # poll sources only
-python radar.py fetch --daily-only  # skip weekly-cadence sources
-python radar.py fetch --source FCA  # poll one source
-python radar.py digest              # today's Markdown digest (top 45)
-python radar.py digest --limit 0    # ...everything, no cap
-python radar.py digest --weekly     # rolling 7-day rollup
-python radar.py dashboard --days 30 # searchable offline HTML
-python radar.py typology            # list the typology library
-python radar.py typology --html     # render it as a browsable page
-python radar.py explain tbml        # explain one typology
-python radar.py explain "money mule"
-python radar.py search "shell company"
-python radar.py why 412             # why did item 412 score as it did?
-python radar.py health              # per-source fetch health
-python radar.py verify              # check cited links are live
-python radar.py verify --links      # also check collected item links
-python radar.py reclassify          # re-score after editing the rules
-python radar.py brief               # paste-ready prompt for Claude
+python argus.py app                 # launch the Streamlit app
+python argus.py run                 # fetch + digest + dashboard (headless daily)
+python argus.py fetch               # poll sources only
+python argus.py fetch --source FCA  # poll one source
+python argus.py digest              # today's Markdown digest (top 45)
+python argus.py digest --weekly     # rolling 7-day rollup
+python argus.py dashboard --days 30 # offline HTML dashboard
+python argus.py typology            # list typologies
+python argus.py explain tbml        # explain one, with red flags and detection
+python argus.py cases               # list documented cases
+python argus.py cases danske-estonia
+python argus.py candidates          # possible new typologies to review
+python argus.py search "shell company"
+python argus.py why 412             # why did item 412 score that way?
+python argus.py health              # per-source fetch health
+python argus.py verify              # check typology citations are live
+python argus.py verify --cases      # check case citations
+python argus.py reclassify          # re-score after editing the rules
+python argus.py brief               # paste-ready prompt for Claude
 ```
-
----
-
-## Evidence policy
-
-This is the part that matters most for your job, so it is worth being precise
-about what the tool does and does not do.
-
-**Nothing in this tool is AI-generated.** There is no LLM in the pipeline. The
-classifier is a transparent keyword rule engine in `fcr/classify.py`. That is a
-deliberate design choice, not a cost compromise: a rule engine cannot invent a
-fact that was not in the source.
-
-Concretely:
-
-- **Every item links to its original source.** The link comes from the feed
-  itself; it is never constructed.
-- **Summaries are the publisher's own words**, taken verbatim from the feed and
-  truncated. Where a source published no description, the digest says so
-  explicitly rather than filling the gap.
-- **Every scoring decision is inspectable.** `python radar.py why <id>` prints
-  the exact terms that caused an item to be kept, categorised and prioritised.
-- **Citations are machine-checkable.** `python radar.py verify` re-fetches every
-  URL cited in the typology library and reports its HTTP status. As last run:
-  22 checked, 0 broken.
-- **The typology library is hand-written and sourced**, not generated. Each
-  entry cites primary sources (legislation.gov.uk, NCA, FATF, OFSI, Europol,
-  Wolfsberg). Treat it as an informed starting point that points you at the
-  primary document — not as authority in itself.
-
-If you want an interpretation layer, `python radar.py brief` writes a
-paste-ready prompt containing the collected items and their links. You can feed
-that to Claude yourself. The tool never calls a paid API on its own.
 
 ---
 
 ## Sources
 
-26 active sources, every one HTTP-verified before it went into `feeds.toml`.
-Tiers follow the standard practitioner hierarchy: tier 1 primary regulator,
-tier 2 FIU/law-enforcement/typology, tier 3 commentary and press.
+25 active sources, every one HTTP-verified before it went into `feeds.toml`.
+Tiers follow the practitioner hierarchy: tier 1 primary regulator, tier 2
+FIU/law enforcement, tier 3 commentary and press.
 
-### UK
-| Source | Type | What it gives you |
-|---|---|---|
-| FCA News | RSS | Enforcement, Dear CEO letters, Market Watch |
-| FCA Publications | RSS | CPs, PSs, finalised guidance |
-| OFSI blog | Atom | Sanctions list changes, licences, enforcement |
-| legislation.gov.uk new SIs | Atom | Final text of MLR amendments (strict-filtered) |
-| HM Treasury | GOV.UK API | SIs, sanctions policy, economic crime plan |
-| OFSI publications | GOV.UK API | UK Sanctions List, general licences |
-| HMRC AML supervision | GOV.UK API | Estate agents, ASPs, MSBs, high-value dealers |
-| Home Office | GOV.UK API | ECCTA, failure to prevent fraud, NRA |
-| Companies House | GOV.UK API | Identity verification rollout, PSC reform |
-| NCA news | link scrape | SARs regime, DAML trends, red-flag alerts |
+**UK** — FCA news, FCA publications, OFSI blog, legislation.gov.uk new SIs,
+HM Treasury, OFSI publications, HMRC AML supervision, Home Office, Companies
+House, NCA news.
 
-### EU
-| Source | Type | What it gives you |
-|---|---|---|
-| EBA | RSS | AML/CFT guidelines, risk factor guidelines |
-| ESMA | RSS | MiCA, market abuse, crypto supervision |
-| AMLA | link scrape | The new single EU AML supervisor, Frankfurt |
-| Europol newsroom | RSS | Operation write-ups — the best free "how the money moved" detail |
+**EU** — EBA, ESMA, AMLA, Europol newsroom.
 
-### Global
-| Source | Type | What it gives you |
-|---|---|---|
-| FATF publications | link scrape | Standards, grey/black list, typology reports |
-| OFAC recent actions | RSS | US designations (matters via correspondent banking) |
-| OpenSanctions changelog | link scrape | Consolidated OFSI+OFAC+EU+UN sanctions data |
-| ComplyAdvantage insights | RSS | Plain-English typology explainers |
+**Global** — FATF publications, OFAC recent actions, OpenSanctions changelog,
+ComplyAdvantage insights.
 
-### News (Google News RSS — free, no key, links resolve to original publishers)
-Global financial crime · UK AML regulation · EU AML/AMLA · Enforcement and
-fines · Crypto and sanctions evasion · FATF and standards · Fraud and mule
+**News** (Google News RSS — free, no key, links resolve to original publishers)
+— global financial crime, UK AML regulation, EU AML/AMLA, enforcement and
+fines, crypto and sanctions evasion, FATF and standards, fraud and mule
 typologies.
 
 ### Deliberately disabled, and why
 
-Three sources in `feeds.toml` are set `enabled = false`. This is honest
-reporting, not an oversight — each was tested and found unusable from a script:
+Three sources are `enabled = false` in `feeds.toml`. Each was tested and found
+unusable from a script — recorded rather than silently ignored:
 
-- **JMLSG** — returns HTTP 403 to any non-browser client (Akamai). Check
+- **JMLSG** — HTTP 403 to any non-browser client (Akamai). Check
   <https://www.jmlsg.org.uk/latest-news/> manually; it publishes rarely.
-- **Wolfsberg Group** — the site is a Nuxt single-page app, so the served HTML
-  contains only JavaScript bundles and no content links. Check
+- **Wolfsberg Group** — a single-page app, so the served HTML has only
+  JavaScript bundles and no content links. Check
   <https://wolfsberg-group.org/resources> quarterly.
 - **Europol main reports** — client-side rendered, same problem. The Europol
-  newsroom RSS announces each flagship report anyway, so this loses nothing.
+  newsroom RSS announces each flagship report anyway.
 
 **FATF is flaky by design.** It sits behind Cloudflare, which fingerprints the
-TLS stack rather than the headers — so no header combination makes `urllib`
-pass. The fetcher automatically retries through `curl`, which usually succeeds,
-but expect this source to fail on some runs. That is not a bug. The "News —
-FATF and standards" feed is the reliable complement and catches grey-list
-changes via press coverage.
+TLS stack rather than the headers — so no header combination gets `urllib`
+through. The fetcher retries via `curl`, which usually succeeds, but expect it
+to fail on some runs. That is not a bug.
 
 ---
 
-## The typology library
+## Adding to the library
 
-25 typologies covering placement, layering, integration, sanctions, fraud,
-corporate structures, virtual assets and exploitation — plus a process
-explainer on SARs, DAML and tipping off.
-
-Each entry gives you: what it is, how it works step by step, the red flags, what
-to do as the analyst, and primary sources.
+**A new typology** — append a `[[typology]]` block to `typologies.toml` with
+`id`, `name`, `aka`, `family`, `summary`, `mechanics`, `bank_impact`,
+`red_flags`, `how_to_spot`, `analyst_actions`, `keywords`, and
+`[[typology.sources]]`. Then:
 
 ```bash
-python radar.py typology           # list them
-python radar.py explain tbml       # trade-based money laundering
-python radar.py explain "cuckoo"   # partial match works
-python radar.py typology --html    # browsable, searchable page
+python argus.py reclassify
 ```
 
-The digest cross-links automatically: when a collected item matches a typology's
-keywords, the digest tells you which one and how to explain it. That is the
-bridge between "here's some news" and "here's what it means for my job".
+The `keywords` list is what links live news to the typology, so make it
+specific — generic words produce false matches.
 
-To add your own, append a `[[typology]]` block to `typologies.toml` and run
-`python radar.py reclassify`.
+**A new case** — append a `[[case]]` block to `cases.toml` with
+`typology_ids = ["..."]` linking it to the typologies it illustrates. One case
+can illustrate several.
 
 ---
 
-## Scheduling it
+## Scheduling
 
-Run `setup-schedule.cmd` once (double-click it). It registers a Windows
-Scheduled Task that runs `run-daily.cmd` every weekday at 08:00.
-
-To check or remove it:
+Run `setup-schedule.cmd` once to register a Windows Scheduled Task that runs the
+headless daily fetch every weekday at 08:00.
 
 ```bash
-schtasks /query /tn FinCrimeRadar
+schtasks /query /tn Argus
 ```
 
 ```bash
-schtasks /delete /tn FinCrimeRadar /f
+schtasks /delete /tn Argus /f
 ```
 
-Nothing breaks if you skip scheduling — the tool is stateful, so a manual run
-after a week away still catches everything you missed.
+Nothing breaks if you skip it — the tool is stateful, so a manual run after a
+week away still catches everything.
 
 ---
 
-## Tuning it
+## Deploying it online (optional, free)
 
-If the digest is too noisy or too quiet, edit `fcr/classify.py`:
+Streamlit Community Cloud hosts this for free from the GitHub repo:
 
-- `CORE_TERMS` — strong AML/sanctions/typology signals, high weight
-- `SUPPORTING_TERMS` — supporting signals, lower weight
-- `NOISE_TERMS` — subtract from the score (never hard-exclude)
-- `threshold` in `classify()` — the relevance bar
+1. Go to <https://share.streamlit.io> and sign in with GitHub.
+2. Point it at `salmanjey-hash/argus`, main branch, `streamlit_app.py`.
+3. Deploy.
 
-Then `python radar.py reclassify` re-scores everything already collected without
-re-fetching. Use `python radar.py why <id>` on a specific item to see exactly
-what fired.
-
-To add a source, append a `[[source]]` block to `feeds.toml`. Verify it returns
-200 first — that is the standing rule for this project.
+One caveat: the cloud filesystem is ephemeral, so the SQLite database resets
+when the app restarts. Press **Refresh now** and it repopulates in about a
+minute. For a personal monitoring tool that's fine; if you want persistent
+history online, point `DB` at a hosted database instead.
 
 ---
 
 ## Layout
 
 ```
-feeds.toml           source config (26 active, 3 disabled with reasons)
-typologies.toml      the typology library — single source of truth
-radar.py             CLI
-fcr/fetch.py         HTTP: conditional GET, throttling, curl fallback
-fcr/parse.py         RSS/Atom/JSON/HTML parsing
-fcr/classify.py      the rule engine — edit this to tune
-fcr/store.py         SQLite state and dedup
-fcr/digest.py        Markdown digest + HTML dashboard
-fcr/typology.py      typology loading, matching, rendering
-data/radar.db        SQLite: items, sources, runs, digests
-digests/             dated Markdown digests
-dashboard.html       searchable offline dashboard
-typologies.html      browsable typology reference
+argus.py              CLI
+streamlit_app.py      app entry point and navigation
+app_shared.py         cached data access for the app
+app_pages/            feed, typologies, cases, emerging, sources
+argus_core/
+  fetch.py            HTTP: conditional GET, throttling, curl fallback
+  parse.py            RSS/Atom/JSON/HTML parsing
+  classify.py         the rule engine - edit this to tune
+  store.py            SQLite state, dedup
+  pipeline.py         shared fetch used by both CLI and app
+  digest.py           Markdown digest + HTML dashboard
+  typology.py         typology loading and rendering
+  cases.py            case library
+feeds.toml            25 active sources, 3 disabled with reasons
+typologies.toml       25 typologies
+cases.toml            15 documented cases
+data/argus.db         SQLite (gitignored)
+digests/              dated Markdown digests (gitignored)
 ```
 
 ---
 
 ## Known limits
 
-- Google News items link through Google's redirector rather than straight to the
-  publisher. The current token format is opaque and cannot be decoded offline
-  (verified — it carries no embedded URL), so the link resolves only when you
-  click it. The parser does unwrap the older `?url=` form, and the **publisher
-  name is always shown** in the digest and dashboard, so you can see the outlet
-  before you click. Tier-1 and tier-2 sources all link directly.
-- Link-scraped sources (FATF, NCA, AMLA, OpenSanctions) have no reliable
-  publication date, so the digest shows "date not stated by source" rather than
-  guessing one.
+- Google News items link through Google's redirector. The current token format
+  is opaque and cannot be decoded offline (verified — it carries no embedded
+  URL), so it resolves only on click. The **publisher name is always shown** so
+  you know the outlet first. All tier-1 and tier-2 sources link directly.
+- Link-scraped sources (FATF, NCA, AMLA, OpenSanctions) often have no reliable
+  publication date, so the app shows "date not stated" rather than guessing.
 - The classifier reads titles and feed summaries, not full article text. A badly
-  titled item with a thin summary can score low. That is why nothing is deleted
-  — everything stays searchable via `radar.py search`.
-- Relevance is a heuristic. It is tuned to over-include rather than miss things,
-  which is the right direction for compliance work, but it is not a substitute
-  for reading the primary source.
+  titled item with a thin summary can score low — which is why nothing is
+  deleted and everything stays searchable.
+- Relevance is a heuristic tuned to over-include rather than miss things. That's
+  the right direction for compliance work, but it is not a substitute for
+  reading the primary source.
+- 20 of the 25 typologies have a documented case attached. The other five say so
+  plainly rather than inventing one.

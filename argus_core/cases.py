@@ -24,6 +24,7 @@ class Case:
     what_happened: str
     bank_impact: str
     analyst_lesson: str
+    verify_note: str = ""
     sources: list[dict] = field(default_factory=list)
 
 
@@ -48,6 +49,7 @@ def load(path: str | Path) -> dict[str, Case]:
             what_happened=_clean(c.get("what_happened", "")),
             bank_impact=_clean(c.get("bank_impact", "")),
             analyst_lesson=_clean(c.get("analyst_lesson", "")),
+            verify_note=_clean(c.get("verify_note", "")),
             sources=c.get("sources", []),
         )
     return out
@@ -109,6 +111,10 @@ def to_text(c: Case, typology_names: dict[str, str] | None = None) -> str:
     for tid in c.typology_ids:
         L.append(f"  · {names.get(tid, tid)}  (explain: python argus.py explain {tid})")
     L.append("")
+    if c.verify_note:
+        L.append("VERIFICATION NOTE")
+        L.append(para(c.verify_note))
+        L.append("")
     L.append("SOURCES")
     for s in c.sources:
         L.append(f"  - {s.get('title','')}")

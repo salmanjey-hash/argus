@@ -60,7 +60,8 @@ def load_cases() -> dict:
             "jurisdiction": c.jurisdiction, "headline": c.headline,
             "typology_ids": c.typology_ids, "backstory": c.backstory,
             "what_happened": c.what_happened, "bank_impact": c.bank_impact,
-            "analyst_lesson": c.analyst_lesson, "sources": c.sources,
+            "analyst_lesson": c.analyst_lesson, "verify_note": c.verify_note,
+            "sources": c.sources,
         }
         for cid, c in lib.items()
     }
