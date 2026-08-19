@@ -2,6 +2,8 @@
 
 **Financial crime intelligence, always watching.**
 
+Live: **https://argusfincrime.streamlit.app**
+
 An AML/KYC regulatory and typology monitor for a working KYC analyst. It polls
 UK, EU and global financial-crime sources, filters the noise, cross-references
 what it finds against a typology reference with real case studies, and serves
@@ -198,8 +200,17 @@ unusable from a script — recorded rather than silently ignored:
 
 **FATF is flaky by design.** It sits behind Cloudflare, which fingerprints the
 TLS stack rather than the headers — so no header combination gets `urllib`
-through. The fetcher retries via `curl`, which usually succeeds, but expect it
-to fail on some runs. That is not a bug.
+through. The fetcher retries via `curl`, which usually succeeds locally, but
+expect it to fail on some runs. That is not a bug.
+
+**On Streamlit Cloud, FATF fails every time.** Verified on the live deployment:
+both the direct request and the curl fallback return 403, because Cloudflare
+systematically challenges datacenter IP ranges rather than intermittently
+challenging a home connection. Everything else — including AMLA, OpenSanctions
+and the GOV.UK APIs — works fine from the cloud. The `News - FATF and standards`
+feed is the mitigation and it does work there, so grey-list changes and new
+typology reports still reach you via press coverage. For the FATF publications
+page itself, run `python argus.py fetch` locally now and then.
 
 ---
 
@@ -241,13 +252,11 @@ week away still catches everything.
 
 ---
 
-## Deploying it online (optional, free)
+## Deployment
 
-Streamlit Community Cloud hosts this for free from the GitHub repo:
-
-1. Go to <https://share.streamlit.io> and sign in with GitHub.
-2. Point it at `salmanjey-hash/argus`, main branch, `streamlit_app.py`.
-3. Deploy.
+Already live on Streamlit Community Cloud at
+**https://argusfincrime.streamlit.app**, deployed from this repo
+(`main` / `streamlit_app.py`). A push to `main` redeploys it automatically.
 
 One caveat: the cloud filesystem is ephemeral, so the SQLite database resets
 when the app restarts. Press **Refresh now** and it repopulates in about a
@@ -299,3 +308,12 @@ digests/              dated Markdown digests (gitignored)
   reading the primary source.
 - 20 of the 25 typologies have a documented case attached. The other five say so
   plainly rather than inventing one.
+
+---
+
+## Name
+
+An independent personal project by a KYC analyst. Not affiliated with, endorsed
+by, or connected to any company that uses the name Argus — including Argus
+Media, Argus Pro, or any other. "Argus" here is a reference to the hundred-eyed
+watchman of Greek myth, chosen because the tool watches many sources at once.
