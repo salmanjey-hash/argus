@@ -1,0 +1,335 @@
+# FinCrime Radar - source configuration
+# Every source below was HTTP-verified before being added. See README.md "Evidence policy".
+# type:  rss | atom | api_govuk | links
+# tier:  1 = primary regulator/lawmaker, 2 = FIU/law-enforcement/typology, 3 = commentary & press
+# cadence: daily | weekly   (weekly sources are skipped on daily runs to stay polite and fast)
+
+# ============================================================ UK - TIER 1
+[[source]]
+name = "FCA - News"
+url = "https://www.fca.org.uk/news/rss.xml"
+homepage = "https://www.fca.org.uk/news"
+type = "rss"
+jurisdiction = "UK"
+category = "Regulator"
+tier = 1
+cadence = "daily"
+notes = "Enforcement, Dear CEO letters, speeches, Market Watch."
+
+[[source]]
+name = "FCA - Publications"
+url = "https://www.fca.org.uk/publications/rss.xml"
+homepage = "https://www.fca.org.uk/publications"
+type = "rss"
+jurisdiction = "UK"
+category = "Regulator"
+tier = 1
+cadence = "daily"
+notes = "Consultation papers, policy statements, finalised guidance."
+
+[[source]]
+name = "OFSI - Sanctions blog"
+url = "https://ofsi.blog.gov.uk/feed/"
+homepage = "https://ofsi.blog.gov.uk/"
+type = "atom"
+jurisdiction = "UK"
+category = "Sanctions"
+tier = 1
+cadence = "daily"
+notes = "UK financial sanctions: list changes, licences, enforcement."
+
+[[source]]
+name = "legislation.gov.uk - New UK SIs"
+url = "https://www.legislation.gov.uk/new/uksi/data.feed"
+homepage = "https://www.legislation.gov.uk/new/uksi"
+type = "atom"
+jurisdiction = "UK"
+category = "Legislation"
+tier = 1
+cadence = "daily"
+strict_filter = true
+notes = "All new statutory instruments. Strict filter - only AML/sanctions/economic-crime SIs surface."
+
+[[source]]
+name = "HM Treasury (GOV.UK)"
+url = "https://www.gov.uk/api/search.json?filter_organisations=hm-treasury&order=-public_timestamp&count=40&fields=title,link,description,public_timestamp"
+homepage = "https://www.gov.uk/government/organisations/hm-treasury"
+type = "api_govuk"
+jurisdiction = "UK"
+category = "Legislation"
+tier = 1
+cadence = "daily"
+notes = "MLR statutory instruments, sanctions policy, economic crime plan."
+
+[[source]]
+name = "OFSI (GOV.UK publications)"
+url = "https://www.gov.uk/api/search.json?filter_organisations=office-of-financial-sanctions-implementation&order=-public_timestamp&count=40&fields=title,link,description,public_timestamp"
+homepage = "https://www.gov.uk/government/organisations/office-of-financial-sanctions-implementation"
+type = "api_govuk"
+jurisdiction = "UK"
+category = "Sanctions"
+tier = 1
+cadence = "daily"
+notes = "UK Sanctions List changes, general licences, enforcement notices."
+
+[[source]]
+name = "HMRC - AML supervision"
+url = "https://www.gov.uk/api/search.json?q=money+laundering&filter_organisations=hm-revenue-customs&order=-public_timestamp&count=30&fields=title,link,description,public_timestamp"
+homepage = "https://www.gov.uk/government/collections/money-laundering-regulations"
+type = "api_govuk"
+jurisdiction = "UK"
+category = "Supervision"
+tier = 1
+cadence = "weekly"
+notes = "HMRC supervises estate agents, ASPs, MSBs, high-value dealers."
+
+[[source]]
+name = "Home Office - Economic crime"
+url = "https://www.gov.uk/api/search.json?q=economic+crime+money+laundering&filter_organisations=home-office&order=-public_timestamp&count=30&fields=title,link,description,public_timestamp"
+homepage = "https://www.gov.uk/government/organisations/home-office"
+type = "api_govuk"
+jurisdiction = "UK"
+category = "Policy"
+tier = 1
+cadence = "weekly"
+notes = "ECCTA, failure-to-prevent-fraud, National Risk Assessment."
+
+[[source]]
+name = "Companies House - ECCTA / IDV"
+url = "https://www.gov.uk/api/search.json?q=identity+verification+register&filter_organisations=companies-house&order=-public_timestamp&count=30&fields=title,link,description,public_timestamp"
+homepage = "https://www.gov.uk/government/organisations/companies-house"
+type = "api_govuk"
+jurisdiction = "UK"
+category = "Registry"
+tier = 1
+cadence = "weekly"
+notes = "Identity verification rollout, PSC / beneficial ownership reform."
+
+# ============================================================ UK - TIER 2
+[[source]]
+name = "NCA - News (UKFIU / NECC)"
+url = "https://www.nationalcrimeagency.gov.uk/news"
+homepage = "https://www.nationalcrimeagency.gov.uk/news"
+type = "links"
+jurisdiction = "UK"
+category = "Typology"
+tier = 2
+cadence = "daily"
+link_pattern = "nationalcrimeagency\\.gov\\.uk/news/"
+notes = "SARs regime, DAML trends, red-flag alerts. No RSS - link scraping."
+
+[[source]]
+name = "JMLSG - Latest news"
+url = "https://www.jmlsg.org.uk/latest-news/"
+homepage = "https://www.jmlsg.org.uk/"
+type = "links"
+jurisdiction = "UK"
+category = "Guidance"
+tier = 2
+cadence = "weekly"
+enabled = false
+link_pattern = "jmlsg\\.org\\.uk/(latest-news|guidance)/"
+notes = "DISABLED: returns HTTP 403 to non-browser clients (Akamai). Check manually - see README."
+
+# ============================================================ EU - TIER 1
+[[source]]
+name = "EBA - European Banking Authority"
+url = "https://www.eba.europa.eu/rss.xml"
+homepage = "https://www.eba.europa.eu/"
+type = "rss"
+jurisdiction = "EU"
+category = "Regulator"
+tier = 1
+cadence = "daily"
+notes = "AML/CFT guidelines, risk factor guidelines, Q&A - until AMLA absorbs the mandate."
+
+[[source]]
+name = "ESMA - Markets regulator"
+url = "https://www.esma.europa.eu/rss.xml"
+homepage = "https://www.esma.europa.eu/"
+type = "rss"
+jurisdiction = "EU"
+category = "Regulator"
+tier = 1
+cadence = "daily"
+notes = "MiCA, market abuse, crypto-asset supervision - overlaps AML."
+
+[[source]]
+name = "AMLA - EU AML Authority"
+url = "https://www.amla.europa.eu/index_en"
+homepage = "https://www.amla.europa.eu/"
+type = "links"
+jurisdiction = "EU"
+category = "Regulator"
+tier = 1
+cadence = "weekly"
+link_pattern = "amla\\.europa\\.eu/.+_en"
+notes = "New single EU AML supervisor, Frankfurt. Publishing RTS from 2026. No RSS yet."
+
+# ============================================================ EU - TIER 2
+[[source]]
+name = "Europol - Newsroom"
+url = "https://www.europol.europa.eu/rss.xml"
+homepage = "https://www.europol.europa.eu/media-press/newsroom"
+type = "rss"
+jurisdiction = "EU"
+category = "Typology"
+tier = 2
+cadence = "daily"
+notes = "Operation write-ups - richest free source of how-the-money-moved detail."
+
+[[source]]
+name = "Europol - Main reports"
+url = "https://www.europol.europa.eu/publications-events/main-reports"
+homepage = "https://www.europol.europa.eu/publications-events/main-reports"
+type = "links"
+jurisdiction = "EU"
+category = "Typology"
+tier = 2
+cadence = "weekly"
+enabled = false
+link_pattern = "europol\\.europa\\.eu/publication"
+notes = """DISABLED: page is client-side rendered, so the report links are not in the \
+served HTML and link-scraping returns nothing. The Europol newsroom RSS above \
+announces each flagship report on publication, which covers this in practice. \
+SOCTA/IOCTA are annual - a calendar reminder is the right tool."""
+
+# ============================================================ GLOBAL
+[[source]]
+name = "FATF - Publications"
+url = "https://www.fatf-gafi.org/en/publications.html"
+homepage = "https://www.fatf-gafi.org/en/publications.html"
+type = "links"
+jurisdiction = "Global"
+category = "Standards"
+tier = 1
+cadence = "weekly"
+link_pattern = "fatf-gafi\\.org/en/publications/"
+notes = """FLAKY BY DESIGN: sits behind Cloudflare, which intermittently returns 403 \
+regardless of headers (it fingerprints the TLS stack, not the request). The fetcher \
+retries via curl, which often succeeds. Expect this source to fail on some runs - \
+that is not a bug in the tool. The 'News - FATF and standards' feed below is the \
+reliable complement."""
+
+[[source]]
+name = "OFAC - Recent actions (US)"
+url = "https://ofac.treasury.gov/rss.xml"
+homepage = "https://ofac.treasury.gov/recent-actions"
+type = "rss"
+jurisdiction = "Global"
+category = "Sanctions"
+tier = 1
+cadence = "daily"
+notes = "US designations. Matters for UK/EU KYC via correspondent banking and secondary sanctions risk."
+
+[[source]]
+name = "OpenSanctions - Changelog"
+url = "https://www.opensanctions.org/changelog/"
+homepage = "https://www.opensanctions.org/"
+type = "links"
+jurisdiction = "Global"
+category = "Sanctions"
+tier = 2
+cadence = "weekly"
+link_pattern = "opensanctions\\.org/(datasets|changelog|articles)/"
+notes = "Consolidated OFSI+OFAC+EU+UN sanctions/PEP data. Free bulk data; paid API only for scale."
+
+[[source]]
+name = "Wolfsberg Group"
+url = "https://wolfsberg-group.org/news"
+homepage = "https://wolfsberg-group.org/"
+type = "links"
+jurisdiction = "Global"
+category = "Guidance"
+tier = 2
+cadence = "weekly"
+enabled = false
+link_pattern = "wolfsberg-group\\.org/(news|resources)/"
+notes = """DISABLED: the site is a Nuxt single-page app - the served HTML contains only \
+JavaScript bundles, no content links, so scraping returns nothing. Wolfsberg publishes \
+only a handful of papers a year, so a quarterly manual check of \
+https://wolfsberg-group.org/resources is the honest substitute."""
+
+# ============================================================ TIER 3 - COMMENTARY & NEWS
+[[source]]
+name = "ComplyAdvantage - Insights"
+url = "https://complyadvantage.com/insights/feed/"
+homepage = "https://complyadvantage.com/insights/"
+type = "rss"
+jurisdiction = "Global"
+category = "Commentary"
+tier = 3
+cadence = "daily"
+notes = "Vendor blog, but solid plain-English typology and regulation explainers."
+
+[[source]]
+name = "News - Global financial crime"
+url = "https://news.google.com/rss/search?q=%22financial+crime%22+OR+%22money+laundering%22+when%3A7d&hl=en-GB&gl=GB&ceid=GB%3Aen"
+homepage = "https://news.google.com/"
+type = "rss"
+jurisdiction = "Global"
+category = "News"
+tier = 3
+cadence = "daily"
+notes = "Google News aggregation - free, no key. Links resolve to original publishers."
+
+[[source]]
+name = "News - UK AML regulation"
+url = "https://news.google.com/rss/search?q=%28%22money+laundering%22+OR+AML+OR+%22economic+crime%22%29+%28FCA+OR+HMRC+OR+%22Companies+House%22+OR+Treasury%29+when%3A7d&hl=en-GB&gl=GB&ceid=GB%3Aen"
+homepage = "https://news.google.com/"
+type = "rss"
+jurisdiction = "UK"
+category = "News"
+tier = 3
+cadence = "daily"
+
+[[source]]
+name = "News - EU AML / AMLA"
+url = "https://news.google.com/rss/search?q=%28AMLA+OR+%22AML+Regulation%22+OR+%22anti-money+laundering%22%29+%28EU+OR+Europe+OR+Brussels+OR+Frankfurt%29+when%3A7d&hl=en-GB&gl=GB&ceid=GB%3Aen"
+homepage = "https://news.google.com/"
+type = "rss"
+jurisdiction = "EU"
+category = "News"
+tier = 3
+cadence = "daily"
+
+[[source]]
+name = "News - Enforcement and fines"
+url = "https://news.google.com/rss/search?q=%28bank+OR+fintech+OR+casino+OR+crypto%29+%28fined+OR+%22enforcement+action%22+OR+penalty%29+%22money+laundering%22+when%3A7d&hl=en-GB&gl=GB&ceid=GB%3Aen"
+homepage = "https://news.google.com/"
+type = "rss"
+jurisdiction = "Global"
+category = "Enforcement"
+tier = 3
+cadence = "daily"
+
+[[source]]
+name = "News - Crypto and sanctions evasion"
+url = "https://news.google.com/rss/search?q=%28crypto+OR+stablecoin+OR+%22virtual+asset%22%29+%28%22money+laundering%22+OR+%22sanctions+evasion%22+OR+Chainalysis+OR+Elliptic%29+when%3A7d&hl=en-GB&gl=GB&ceid=GB%3Aen"
+homepage = "https://news.google.com/"
+type = "rss"
+jurisdiction = "Global"
+category = "Typology"
+tier = 3
+cadence = "daily"
+
+[[source]]
+name = "News - FATF and standards"
+url = "https://news.google.com/rss/search?q=%28FATF+OR+%22Financial+Action+Task+Force%22+OR+%22grey+list%22+OR+%22Basel+AML+Index%22+OR+Wolfsberg%29+when%3A30d&hl=en-GB&gl=GB&ceid=GB%3Aen"
+homepage = "https://news.google.com/"
+type = "rss"
+jurisdiction = "Global"
+category = "Standards"
+tier = 3
+cadence = "daily"
+notes = "Reliable complement to the flaky FATF scrape - catches grey/black list changes and new typology reports via press coverage."
+
+[[source]]
+name = "News - Fraud and mule typologies"
+url = "https://news.google.com/rss/search?q=%28%22money+mule%22+OR+%22authorised+push+payment%22+OR+%22APP+fraud%22+OR+%22trade-based+money+laundering%22+OR+smurfing%29+when%3A14d&hl=en-GB&gl=GB&ceid=GB%3Aen"
+homepage = "https://news.google.com/"
+type = "rss"
+jurisdiction = "Global"
+category = "Typology"
+tier = 3
+cadence = "daily"

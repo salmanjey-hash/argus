@@ -1,0 +1,660 @@
+# ARGUS - real case library
+#
+# Each case is a documented, publicly-reported financial crime matter, linked to
+# the typologies it illustrates. Headline facts were checked against primary
+# sources (regulator press releases, court records, DOJ/FCA announcements) when
+# this file was written.
+#
+# IMPORTANT: these are compiled summaries for analyst training. The linked
+# primary source is the authority - read it before relying on any detail here.
+# Run `python argus.py verify --cases` to re-check every link is live.
+#
+# To add a case: copy a block, keep the id kebab-case, and list the typology ids
+# it illustrates in `typology_ids`.
+
+[[case]]
+id = "natwest-fowler-oldfield"
+name = "NatWest and Fowler Oldfield"
+year = "2021"
+jurisdiction = "UK"
+headline = "The FCA's first criminal prosecution of a bank under the Money Laundering Regulations. £264.8m fine."
+typology_ids = ["cash-intensive", "structuring", "sars-daml"]
+backstory = """
+Fowler Oldfield was a Bradford gold dealer. When NatWest took the company on as a
+customer, its predicted annual turnover was around £15 million. Over roughly five
+years the company deposited about £365 million with the bank, of which around
+£264 million was cash. At the peak, couriers were bringing cash into branches in
+bin bags - on one occasion staff recorded so much cash that it could not be fitted
+into the counting machine.
+
+The failure was not that nobody noticed. It was that the bank's systems and people
+did not act on what they saw. A significant volume of cash deposits was mis-coded
+by the system as cheque deposits, which routed them through less stringent rules.
+Fowler Oldfield's risk rating was moved from high to low without a documented
+reason. The £15 million expected turnover captured at onboarding was never
+revisited against the £365 million that actually flowed."""
+what_happened = """
+NatWest pleaded guilty to three offences of failing to comply with the Money
+Laundering Regulations 2007. On 13 December 2021 at Southwark Crown Court it was
+fined £264,772,619.95 - reduced from a headline £397 million because of the guilty
+plea - plus a confiscation order and the FCA's costs. It was the first time the FCA
+had brought a criminal prosecution under the MLR against a bank. A separate West
+Yorkshire Police investigation led to further prosecutions of individuals connected
+to the cash deposits."""
+bank_impact = """
+The case reset UK expectations in three ways. First, it established that AML
+failure can be prosecuted criminally, not just fined civilly. Second, it showed
+that a stale onboarding assumption - an expected turnover figure nobody refreshed -
+is itself a control failure. Third, it made transaction-coding integrity a board
+issue: a mapping error that sent cash down a cheque workflow was central to the
+judgment."""
+analyst_lesson = """
+Expected activity captured at onboarding is a control, not a form field. If actual
+turnover diverges from expectation by an order of magnitude, that divergence is the
+alert. Also: check what your system thinks a transaction is. Cash mis-coded as
+cheque was invisible precisely because the data said it was something else."""
+[[case.sources]]
+title = "FCA - NatWest fined £264.8 million for anti-money laundering failures"
+url = "https://www.fca.org.uk/news/press-releases/natwest-fined-264.8million-anti-money-laundering-failures"
+
+# ---------------------------------------------------------------------------
+[[case]]
+id = "danske-estonia"
+name = "Danske Bank, Estonia branch"
+year = "2007-2015, settled 2022"
+jurisdiction = "EU / Global"
+headline = "About €200 billion in non-resident flows through one small branch. $2bn+ in US and Danish settlements."
+typology_ids = ["shell-companies", "correspondent-nested", "pep-kleptocracy", "professional-enablers"]
+backstory = """
+Danske Bank acquired Finland's Sampo Bank in 2007, and with it a small Estonian
+branch. That branch ran a "non-resident portfolio" - customers who were not
+Estonian, largely from Russia and other former Soviet states, routed through
+UK, BVI and Cyprus corporate structures with obscured beneficial ownership.
+
+The branch was extraordinarily profitable relative to its size, which was itself
+the warning. It operated on a separate IT platform from group systems, so group
+compliance had limited visibility. Internal and external warnings - including from
+a whistleblower and from correspondent banks - were raised over years before the
+scale became public in 2017-2018.
+
+An important nuance often lost in reporting: the €200 billion figure is the total
+flow through the portfolio, not a finding that €200 billion was laundered. A large
+share was legitimate. The compliance failure is that the bank could not tell the
+difference."""
+what_happened = """
+Danske exited the Estonian market and commissioned an external investigation that
+became public in 2018. In December 2022 Danske Bank pleaded guilty in the United
+States to conspiracy to commit bank fraud and agreed to forfeit $2 billion, with
+parallel resolutions involving Danish authorities and the SEC. Senior executives
+departed; several faced criminal investigation in Denmark and Estonia."""
+bank_impact = """
+This is the case that made "correspondent banking exposure" a board-level topic
+across Europe. It demonstrated that a subsidiary or branch on a separate technology
+stack is a blind spot, not just an integration nuisance; that profitability wildly
+out of line with a unit's size is a red flag in itself; and that a correspondent
+bank inherits the risk of everyone its respondent serves. It directly informed the
+architecture of the EU's new single supervisor, AMLA."""
+analyst_lesson = """
+Ask where the money is coming from and whether the entity structure lets you answer
+that. A customer base of non-resident shell companies, held on a system your group
+compliance cannot see into, is the whole typology in one sentence. And treat
+unusually high margin as a risk indicator, not a success story."""
+[[case.sources]]
+title = "US DOJ - Danske Bank pleads guilty to fraud on US banks"
+url = "https://www.justice.gov/opa/pr/danske-bank-pleads-guilty-fraud-us-banks-multi-billion-dollar-scheme-access-us-financial"
+
+# ---------------------------------------------------------------------------
+[[case]]
+id = "bitfinex-lichtenstein"
+name = "The Bitfinex hack and the Lichtenstein/Morgan laundering"
+year = "2016 hack, 2022 arrests, 2024 sentencing"
+jurisdiction = "US / Global"
+headline = "119,754 bitcoin stolen; a six-year laundering effort unwound by blockchain tracing."
+typology_ids = ["crypto-laundering", "mixers", "structuring", "shell-companies"]
+backstory = """
+In August 2016 the crypto exchange Bitfinex was hacked. The intruder fraudulently
+authorised more than 2,000 transactions moving 119,754 bitcoin out of the exchange
+into a wallet under their control.
+
+The interesting part for an AML analyst is not the hack - it is the six years of
+laundering that followed. Ilya Lichtenstein and his wife Heather Morgan moved the
+proceeds using a stack of techniques: automated transactions in rapid succession,
+deposits into accounts at multiple darknet markets and exchanges then withdrawing
+them to break the chain, converting to other assets including privacy coins, using
+US-based business accounts to legitimise banking activity, and buying gold and
+prepaid cards.
+
+Because the blockchain is a permanent public ledger, none of this deleted the trail
+- it only lengthened it. Investigators were eventually able to follow it."""
+what_happened = """
+The couple were arrested in February 2022. Both pleaded guilty to money laundering
+conspiracy. In November 2024 Lichtenstein was sentenced to five years and Morgan to
+18 months. Authorities recovered the great majority of the stolen bitcoin - by the
+time of sentencing, worth roughly $10 billion."""
+bank_impact = """
+For banks and payment firms, the lesson is about the fiat edges. The laundering
+relied on ordinary business accounts and prepaid instruments to convert crypto value
+into spendable money. That conversion point is where a regulated firm has both
+visibility and obligation. It also demonstrated why blockchain analytics exposure
+scoring became standard practice for firms banking crypto businesses."""
+analyst_lesson = """
+Crypto laundering is not untraceable - it is deferred traceability. Your control
+point is the on-ramp and off-ramp. Watch for business accounts whose stated activity
+does not explain crypto-linked inflows, and treat purchases of gold and prepaid
+instruments after crypto liquidation as a recognised integration pattern."""
+[[case.sources]]
+title = "US DOJ - Bitfinex hacker sentenced for money laundering conspiracy"
+url = "https://www.justice.gov/usao-dc/pr/bitfinex-hacker-sentenced-money-laundering-conspiracy-involving-billions-stolen"
+
+# ---------------------------------------------------------------------------
+[[case]]
+id = "rimasauskas-bec"
+name = "Evaldas Rimasauskas: the BEC that fooled Google and Facebook"
+year = "2013-2015, sentenced 2019"
+jurisdiction = "US / Lithuania / Latvia"
+headline = "Over $100m obtained by invoicing two of the world's most sophisticated companies."
+typology_ids = ["bec-invoice", "shell-companies", "money-mules"]
+backstory = """
+Rimasauskas registered a company in Latvia with a name closely matching Quanta
+Computer, a large Taiwanese hardware manufacturer that genuinely supplied both
+Google and Facebook. That single act - a lookalike corporate identity in a
+different jurisdiction - is the whole scheme in miniature.
+
+He then sent forged invoices, contracts and letters that appeared to be executed and
+signed by executives of the companies being impersonated, along with forged bank
+instructions. Because both victims really did owe Quanta money, the invoices did not
+look fraudulent. They looked like business as usual.
+
+Payments were received into accounts in Latvia and Cyprus and then dispersed across
+multiple jurisdictions."""
+what_happened = """
+Facebook wired close to $100 million and Google over $23 million before the scheme
+was detected. Rimasauskas was arrested in Lithuania in March 2017, extradited to the
+United States, and pleaded guilty to wire fraud in March 2019. He was sentenced to
+five years in prison, ordered to forfeit nearly $50 million and to pay over $26
+million in restitution. Both companies recovered most or all of the money."""
+bank_impact = """
+It is a standing rebuttal to "our customers are too sophisticated for this". For the
+receiving bank the red flags were entirely visible on their side: a newly
+incorporated company with a name mimicking an established manufacturer, receiving
+eight-figure credits from unrelated global corporates, then dispersing them
+onward. Inbound-side detection is a bank obligation, not just the victim's problem."""
+analyst_lesson = """
+Name-similarity to an established company is a first-order onboarding red flag,
+especially when the incorporation is recent and in a different jurisdiction from the
+company being echoed. Then watch the pattern: large first credit from an unrelated
+corporate, followed by rapid dispersal."""
+[[case.sources]]
+title = "US DOJ - Lithuanian man sentenced for wire fraud scheme against US tech companies"
+url = "https://www.justice.gov/usao-sdny/pr/lithuanian-man-sentenced-5-years-prison-theft-over-120-million-fraudulent-business"
+
+# ---------------------------------------------------------------------------
+[[case]]
+id = "hajiyeva-uwo"
+name = "Zamira Hajiyeva and the UK's first Unexplained Wealth Order"
+year = "2018 UWO, assets forfeited 2024-25"
+jurisdiction = "UK"
+headline = "£16m spent in Harrods over a decade on 54 credit cards linked to a state bank her husband ran."
+typology_ids = ["pep-kleptocracy", "real-estate", "professional-enablers"]
+backstory = """
+Jahangir Hajiyev was chairman of the state-controlled International Bank of
+Azerbaijan from 2001 to 2015. He was later convicted of fraud and embezzlement and
+sentenced to a long prison term.
+
+His wife Zamira Hajiyeva spent approximately £16 million at Harrods over about a
+decade, using 54 credit cards, many linked to her husband's bank. She held a
+Knightsbridge house and, through a corporate structure, a Berkshire golf club.
+
+The question the NCA put was simple and is the core PEP question: how does a
+declared income support this? A UWO reverses the usual burden - it requires the
+respondent to explain the source of wealth behind specific assets."""
+what_happened = """
+In 2018 the NCA obtained the UK's first Unexplained Wealth Order against her. She
+challenged it and lost, with the order upheld on appeal. After a long investigation
+she agreed to give up the Knightsbridge property and the Berkshire golf club, which
+were put up for sale together for around £19.5 million."""
+bank_impact = """
+It showed that spending patterns are intelligence. Harrods was not a bank, but the
+card activity was processed by regulated firms, and the concentration - 54 cards,
+one merchant, eight figures, cards issued by a foreign state-controlled bank the
+holder's husband chaired - is exactly the sort of pattern institutions are expected
+to question. It also confirmed that UWOs are usable, which raised expectations of
+source-of-wealth evidencing for PEP relationships across UK private banking."""
+analyst_lesson = """
+For a PEP, source of wealth is a career-length question, not a transaction-level one.
+"My husband is a banker" is not a source of wealth. Ask what the role paid, over what
+period, and whether that plausibly funds what you are looking at. Also screen close
+family and associates, not just the named official."""
+[[case.sources]]
+title = "NCA - Unexplained Wealth Orders"
+url = "https://www.nationalcrimeagency.gov.uk/what-we-do/crime-threats/money-laundering-and-illicit-finance"
+
+# ---------------------------------------------------------------------------
+[[case]]
+id = "operation-fort"
+name = "Operation Fort: the UK's largest modern slavery prosecution"
+year = "2014-2017 offending, trials 2019-2021"
+jurisdiction = "UK"
+headline = "92 identified victims, possibly up to 400 exploited. Banks were the visible touchpoint."
+typology_ids = ["human-trafficking", "money-mules", "cash-intensive"]
+backstory = """
+An organised crime group recruited vulnerable people in Poland - many homeless, in
+addiction recovery, or with convictions - with promises of well-paid work and
+accommodation in the West Midlands. On arrival, victims were housed in squalid
+conditions and put to work in farms, factories, waste recycling plants and parcel
+sorting warehouses, often through legitimate employment agencies supplying real
+businesses.
+
+The financial mechanics are what make it a KYC case. Traffickers accompanied victims
+to open bank accounts, doing the talking because the victims spoke little English.
+Wages were paid legitimately into those accounts by real employers - and then
+withdrawn or transferred straight to the controllers. Victims were left with a
+fraction of their earnings. When one perpetrator accumulated too much, he brought in
+an accomplice; nearly £140,000 was paid into that accomplice's account, cashed, and
+handed back."""
+what_happened = """
+Following a West Midlands Police investigation with the Gangmasters and Labour Abuse
+Authority and Polish authorities, prosecutions ran in 2019 and 2021, with 11 people
+convicted. The Independent Anti-Slavery Commissioner published a review specifically
+examining what businesses, including banks, should learn from it."""
+bank_impact = """
+This case is why UK banks built modern-slavery indicators into monitoring. The
+pattern was detectable in bank data alone: clusters of accounts sharing addresses and
+phone numbers, opened in the presence of a third party who did the talking, receiving
+payroll credits from a small set of employers and sweeping to a common beneficiary
+the same day. The Commissioner's review made the point that branch staff observations
+were a genuine intelligence source that was underused."""
+analyst_lesson = """
+Cluster your book by address, phone number and device - this typology is invisible
+per-account and obvious in aggregate. And treat "third party accompanies customer and
+answers for them at account opening" as a recordable red flag, not an inconvenience.
+Remember the account holder is a victim: report, but handle through vulnerability
+protocols and never tip off."""
+[[case.sources]]
+title = "CPS - Convictions in largest ever modern slavery prosecution"
+url = "https://www.cps.gov.uk/west-midlands/news/secures-convictions-largest-ever-modern-slavery-prosecution"
+[[case.sources]]
+title = "Independent Anti-Slavery Commissioner - Operation Fort review (PDF)"
+url = "https://www.antislaverycommissioner.co.uk/media/z35hayca/iasc-operation-fort-review-june-2020.pdf"
+
+# ---------------------------------------------------------------------------
+[[case]]
+id = "bnp-paribas-sanctions"
+name = "BNP Paribas sanctions violations"
+year = "2004-2012, resolved 2014"
+jurisdiction = "US / France"
+headline = "$8.9 billion forfeiture - at the time the largest sanctions penalty ever imposed."
+typology_ids = ["sanctions-evasion", "correspondent-nested"]
+backstory = """
+Over roughly eight years, BNP Paribas processed billions of dollars of transactions
+through the US financial system on behalf of entities in Sudan, Iran and Cuba, which
+were subject to US sanctions.
+
+The mechanics were deliberate concealment rather than oversight. Payment messages
+were stripped or amended to remove references to sanctioned parties, satellite banks
+were used to disguise the origin of transactions, and internal warnings about the
+practice were not acted upon. This is why the case is a sanctions-evasion case rather
+than a screening-failure case: the controls were not simply weak, they were worked
+around."""
+what_happened = """
+In 2014 BNP Paribas pleaded guilty to conspiring to violate US sanctions and agreed
+to pay $8.9 billion. It was also subject to a temporary suspension of certain US
+dollar clearing operations - for a bank, an operational sanction with more sting
+than the fine."""
+bank_impact = """
+Two lasting effects. First, it established that US dollar clearing gives US
+authorities jurisdiction over conduct largely outside the US, which is why non-US
+banks screen against OFAC lists at all. Second, the temporary loss of dollar-clearing
+privileges showed that the real risk in sanctions breach is not the fine but the loss
+of market access. Payment-message integrity - not stripping fields - became a
+first-order control."""
+analyst_lesson = """
+Watch for incomplete originator or beneficiary information in payment messages. Field
+stripping is a discrete red flag in its own right, separate from whether a name
+matches a list. And remember sanctions are strict liability - the risk-based judgement
+you apply in AML does not transfer."""
+[[case.sources]]
+title = "US DOJ - BNP Paribas agrees to plead guilty and pay $8.9 billion"
+url = "https://www.justice.gov/opa/pr/bnp-paribas-agrees-plead-guilty-and-pay-89-billion-illegally-processing-financial"
+
+# ---------------------------------------------------------------------------
+[[case]]
+id = "deutsche-mirror-trades"
+name = "Deutsche Bank mirror trading, Moscow"
+year = "2011-2015, fined 2017"
+jurisdiction = "UK / US / Russia"
+headline = "About $10 billion moved out of Russia through paired trades with no economic purpose."
+typology_ids = ["shell-companies", "correspondent-nested", "professional-enablers"]
+backstory = """
+The scheme was elegant in its simplicity. A customer would buy a liquid Russian blue-chip
+stock in Moscow, paying in roubles. Almost simultaneously, a related customer - often
+registered offshore and sharing beneficial ownership - would sell the identical
+quantity of the same stock in London, receiving US dollars or other hard currency.
+
+No net market position was taken. Nothing was really being invested. The only effect
+was that value left Russia in roubles and arrived offshore in dollars. The trades
+were "mirrors" of each other, which is where the name comes from.
+
+Roughly $10 billion moved this way. The counterparties were frequently shell companies
+registered in offshore jurisdictions with common ownership - a fact discoverable from
+the bank's own records."""
+what_happened = """
+In January 2017 the UK's FCA fined Deutsche Bank £163 million for AML control
+failings, then its largest such penalty, and the New York Department of Financial
+Services imposed a separate $425 million penalty. Regulators found the bank's AML
+control framework had significant deficiencies through the relevant period."""
+bank_impact = """
+It broadened where AML monitoring has to look. Before this, transaction monitoring in
+many banks concentrated on payments; mirror trading happened in the securities
+business, where surveillance was tuned for market abuse rather than laundering. The
+case forced firms to monitor trading activity for laundering typologies too, and to
+look at customer-to-customer relationships rather than accounts in isolation."""
+analyst_lesson = """
+Look for offsetting trades between related parties with no economic rationale - equal
+and opposite positions, settled in different currencies or jurisdictions, that leave
+no net exposure. If a customer's trading generates no profit or loss but does change
+the currency and location of their money, that is the point of the exercise."""
+[[case.sources]]
+title = "FCA - Deutsche Bank fined £163 million for anti-money laundering controls failure"
+url = "https://www.fca.org.uk/news/press-releases/fca-fines-deutsche-bank-163-million-anti-money-laundering-controls-failure"
+
+# ---------------------------------------------------------------------------
+[[case]]
+id = "1mdb"
+name = "1MDB: a sovereign wealth fund looted"
+year = "2009-2015, prosecutions ongoing"
+jurisdiction = "Malaysia / US / Singapore / Switzerland"
+headline = "Billions diverted from a state development fund through shell companies, banks and luxury assets."
+typology_ids = ["pep-kleptocracy", "shell-companies", "professional-enablers", "real-estate", "correspondent-nested"]
+backstory = """
+1Malaysia Development Berhad was a state investment fund created in 2009. Money raised
+through bond issues, ostensibly for development projects, was instead diverted through
+a chain of shell companies and accounts across multiple jurisdictions.
+
+The laundering was textbook integration: the proceeds bought high-end real estate in
+New York, London and Los Angeles, a superyacht, artworks, jewellery - and, notoriously,
+helped finance a Hollywood film about financial excess. Financier Jho Low was
+identified as central to the movement of funds; Malaysia's then prime minister Najib
+Razak was later convicted domestically of charges relating to funds from a former
+1MDB unit.
+
+Several banks and bankers were implicated in moving or failing to question the flows.
+Goldman Sachs, which arranged bond issues for the fund, reached a large-scale
+resolution with US authorities in 2020, and Singapore shut down local operations of
+two private banks over their handling of related flows."""
+what_happened = """
+The US Department of Justice brought its largest ever kleptocracy asset recovery action,
+seizing and recovering assets bought with diverted funds. Multiple jurisdictions
+prosecuted individuals and institutions. Recovery and prosecution continue more than a
+decade after the offending began."""
+bank_impact = """
+1MDB is the reference case for how a PEP-linked flow crosses many institutions and is
+questioned by none of them individually. Each bank saw a slice that looked odd but
+survivable. It drove supervisory focus on private banking source-of-wealth
+documentation, on the risk of sovereign and state-owned entity customers, and on the
+responsibility of arranging banks for what the money they raise is used for."""
+analyst_lesson = """
+Payments from state-owned entities or sovereign funds into private structures deserve
+the same question every time: what is the commercial rationale, and who ultimately
+benefits? Complexity is not sophistication - a chain of companies across several
+secrecy jurisdictions with no operating substance is the typology, not the cover for
+it."""
+[[case.sources]]
+title = "US DOJ - 1MDB asset recovery"
+url = "https://www.justice.gov/archives/opa/pr/united-states-reaches-settlement-recover-more-49-million-assets-traceable-1mdb"
+
+# ---------------------------------------------------------------------------
+[[case]]
+id = "tornado-cash"
+name = "Tornado Cash: sanctioning code"
+year = "2022 designation, later litigation"
+jurisdiction = "US / Global"
+headline = "A crypto mixer designated by OFAC, turning mixer exposure into a sanctions question."
+typology_ids = ["mixers", "crypto-laundering", "sanctions-evasion", "proliferation"]
+backstory = """
+Tornado Cash was a decentralised mixing service on the Ethereum blockchain. Users
+deposited funds into a pool and later withdrew to a different address, severing the
+on-chain link between source and destination.
+
+In August 2022 the US Treasury designated it, stating it had been used to launder
+large volumes of criminal proceeds, including funds attributed to the Lazarus Group,
+a state-sponsored North Korean hacking organisation. That last point is what made it a
+proliferation-financing matter as well as an AML one: the proceeds were funding a
+sanctioned weapons programme.
+
+The designation was legally novel because the target was substantially autonomous
+software rather than a company, and it prompted significant litigation and debate about
+sanctioning code. The designation was subsequently challenged in the US courts, and the
+legal position around it has continued to develop."""
+what_happened = """
+Following designation, US persons were prohibited from transacting with the associated
+addresses. Major exchanges and DeFi front-ends began blocking addresses with Tornado
+Cash exposure. Separately, individuals associated with developing and operating the
+service faced criminal proceedings in the US and the Netherlands."""
+bank_impact = """
+It changed how firms treat blockchain analytics output. Exposure to a designated mixer
+is not merely an elevated AML risk score - it is potential sanctions exposure, which
+carries strict liability and a different escalation path. It also forced firms to
+develop a position on indirect exposure: how many hops from a designated address still
+counts."""
+analyst_lesson = """
+Separate the two questions. "Has this customer touched a mixer?" is an AML risk
+question. "Has this customer touched a designated mixer?" is a sanctions question that
+you escalate immediately rather than risk-assess. Record hop distance, and have a
+documented, consistent policy for indirect exposure rather than deciding case by case."""
+[[case.sources]]
+title = "US Treasury - Sanctions virtual currency mixer Tornado Cash"
+url = "https://home.treasury.gov/news/press-releases/jy0916"
+
+# ---------------------------------------------------------------------------
+[[case]]
+id = "wachovia-casa-de-cambio"
+name = "Wachovia and the Mexican casas de cambio"
+year = "2004-2007, resolved 2010"
+jurisdiction = "US / Mexico"
+headline = "$378 billion in unmonitored correspondent flows; drug cartel proceeds bought aircraft."
+typology_ids = ["correspondent-nested", "hawala", "cash-intensive", "structuring"]
+backstory = """
+Wachovia provided correspondent banking services to Mexican casas de cambio - currency
+exchange houses. These are legitimate businesses serving a real need in a
+cash-heavy remittance corridor. The problem was the near-total absence of monitoring
+of what flowed through them.
+
+Roughly $378 billion moved through these correspondent relationships over about four
+years with inadequate AML oversight. Some of that flow was drug-trafficking proceeds.
+Investigators were able to trace funds that had passed through the accounts to the
+purchase of aircraft later seized carrying multi-tonne cocaine loads.
+
+The failure was structural: the bank onboarded the exchange houses but did not treat
+their customers' activity as something it needed visibility into."""
+what_happened = """
+In 2010 Wachovia - by then acquired by Wells Fargo - entered a deferred prosecution
+agreement, forfeiting around $110 million and paying a $50 million civil penalty for
+failing to maintain an effective AML programme."""
+bank_impact = """
+It is the foundational correspondent banking case. It established in practical terms
+that providing rails to a money service business means owning visibility into the risk
+that business carries - the origin of the enhanced due diligence expectations now
+codified for correspondent relationships. It is also the case most often cited in
+debates about de-risking, because one response to it was banks exiting the corridor
+entirely rather than monitoring it properly."""
+analyst_lesson = """
+When your customer is a financial institution or MSB, your customer's customers are
+your risk. Ask for their AML programme, ask whether they permit nesting, and monitor
+the corridor volumes against what their declared business could plausibly generate."""
+[[case.sources]]
+title = "US DOJ - Wachovia enters deferred prosecution agreement"
+url = "https://www.justice.gov/archives/opa/pr/wachovia-enters-deferred-prosecution-agreement"
+
+# ---------------------------------------------------------------------------
+[[case]]
+id = "crown-star-casinos"
+name = "Crown Resorts and Star Entertainment"
+year = "Inquiries 2020-2022, penalties 2023-2024"
+jurisdiction = "Australia"
+headline = "Junket operators, cash in hotel rooms, and a hotel booking channel used to disguise gambling transactions."
+typology_ids = ["gambling", "cash-intensive", "pep-kleptocracy", "professional-enablers"]
+backstory = """
+Australian casino operators used "junket" operators to bring high-value international
+gamblers. Public inquiries found that some junket operators had links to organised
+crime, and that due diligence on them and on patrons was inadequate.
+
+The specific mechanics were striking. Large volumes of cash were accepted with weak
+source-of-funds enquiry, including cash delivered in bags to hotel rooms. At Crown,
+subsidiary bank accounts were used in ways that disguised the true nature of gambling
+transactions - patrons made payments that were processed as hotel or accommodation
+charges rather than gambling. Patron accounts were used to move funds in patterns
+inconsistent with gambling activity."""
+what_happened = """
+A series of royal commissions and public inquiries in New South Wales, Victoria and
+Western Australia found both operators unsuitable to hold their licences, subject to
+remediation and supervision. AUSTRAC brought civil penalty proceedings; Crown was
+ordered to pay a A$450 million penalty in 2023, and Star agreed to a A$300 million
+penalty in 2024. Boards and senior management were substantially replaced."""
+bank_impact = """
+For banks the read-across is about what a payment descriptor actually represents. When
+gambling transactions are processed through an accommodation merchant category, the
+bank's own monitoring is looking at the wrong thing. It also reinforced that
+casinos are regulated AML entities in their own right, and that a bank serving them
+inherits questions about their controls."""
+analyst_lesson = """
+Test whether the merchant category and payment narrative match the underlying activity.
+For gambling customers, the ratio of deposits to actual play is the single most useful
+signal - money in and straight out with minimal turnover is not gambling, it is
+laundering."""
+[[case.sources]]
+title = "AUSTRAC - Crown Resorts ordered to pay A$450 million penalty"
+url = "https://www.austrac.gov.au/news-and-media/media-release/crown-ordered-pay-450-million-penalty"
+
+# ---------------------------------------------------------------------------
+[[case]]
+id = "lebanese-canadian-bank"
+name = "Lebanese Canadian Bank: used cars and Hezbollah financing"
+year = "2011 action"
+jurisdiction = "US / Lebanon / West Africa"
+headline = "Drug proceeds laundered through second-hand car exports and consumer goods trade."
+typology_ids = ["tbml", "hawala", "cash-intensive", "npo-abuse"]
+backstory = """
+The scheme wove together drug trafficking, trade and informal value transfer. Proceeds
+from cocaine sales were consolidated and moved to Lebanon through exchange houses and
+bulk cash smuggling. From there, funds were wired to the United States to buy used
+cars.
+
+The cars were shipped to West Africa and sold, typically for cash. Those proceeds -
+now looking like ordinary vehicle sales revenue - were moved back to Lebanon, mixed
+with other trade flows in consumer goods. At each step the money acquired a more
+legitimate-looking commercial explanation, and value crossed borders inside real
+trade rather than as suspicious transfers.
+
+US authorities alleged the network was linked to Hezbollah financing, which added a
+terrorist-financing dimension to what was structurally a TBML and IVTS case."""
+what_happened = """
+In 2011 the US Treasury named Lebanese Canadian Bank as a financial institution of
+primary money laundering concern under section 311 of the USA PATRIOT Act. The bank was
+effectively cut off from the US financial system and was subsequently wound down and
+its assets sold. Related civil forfeiture actions targeted car dealerships and
+shipping-linked businesses."""
+bank_impact = """
+It is the clearest published illustration of why trade and used-goods flows are a
+laundering channel, and it shaped correspondent banking risk appetite for the region.
+For a bank, the exposure was through ordinary commercial customers - car dealerships
+and exporters - whose activity looked like trade because it was trade. The illicit
+element was whose money funded it."""
+analyst_lesson = """
+Trade-based laundering usually involves real goods really moving. Do not expect the
+shipment to be fake. Look instead at whether the payer is connected to the buyer,
+whether payments come from third parties in unrelated jurisdictions, and whether the
+volume of a dealer's business is explicable by its size and premises."""
+[[case.sources]]
+title = "US Treasury - Lebanese Canadian Bank named primary money laundering concern"
+url = "https://home.treasury.gov/news/press-releases/tg1057"
+
+# ---------------------------------------------------------------------------
+[[case]]
+id = "dprk-it-workers"
+name = "North Korean IT workers inside Western payrolls"
+year = "Advisories from 2022, prosecutions ongoing"
+jurisdiction = "US / Global"
+headline = "Sanctioned-state revenue generation through remote contract work and stolen identities."
+typology_ids = ["proliferation", "sanctions-evasion", "emi-fintech", "money-mules"]
+backstory = """
+Thousands of North Korean IT workers have been placed as remote contractors with
+companies in the US, Europe and Asia, using stolen or fabricated identities and
+operating from third countries including China and Russia. Their earnings - often
+substantial, and sometimes across several simultaneous jobs held by one person -
+are routed back to the DPRK regime, contributing to sanctioned weapons programmes.
+
+The financial fingerprints are distinctive. Payment is requested to accounts that do
+not match the contractor's claimed identity or location, often payment platforms and
+e-money accounts rather than mainstream banks. Payment instructions change frequently.
+Multiple supposedly unrelated contractors share banking details, devices or addresses.
+
+Some cases involved "laptop farms" run by US-based facilitators, where company-issued
+hardware was kept in the US and accessed remotely, so the equipment appeared to be in
+the right country."""
+what_happened = """
+US authorities have issued repeated advisories, brought prosecutions against
+facilitators, and seized accounts and websites used in the schemes. The pattern has
+been observed across many companies, including firms that had no idea they had hired a
+sanctioned-state worker."""
+bank_impact = """
+This is proliferation financing arriving through payroll and payment-platform rails
+rather than trade finance. For e-money institutions and payment firms in particular, it
+sits squarely in the onboarding controls: identity documents that do not withstand
+liveness or authenticity checks, and clusters of accounts sharing technical
+fingerprints. Because the end use is a weapons programme, it is a sanctions matter."""
+analyst_lesson = """
+Look for mismatch between claimed location and payment destination, third-party payment
+instructions, and shared device or IP fingerprints across nominally unconnected
+customers. Where a contractor's identity documentation is inconsistent and payment is
+directed to an unrelated party, escalate as a potential sanctions issue rather than
+routine fraud."""
+[[case.sources]]
+title = "US Treasury / State - Guidance on DPRK IT workers"
+url = "https://ofac.treasury.gov/recent-actions"
+
+# ---------------------------------------------------------------------------
+[[case]]
+id = "pandora-panama-papers"
+name = "Panama and Pandora Papers"
+year = "2016 and 2021 leaks"
+jurisdiction = "Global"
+headline = "Leaked records exposing how offshore structures are built, and by whom."
+typology_ids = ["professional-enablers", "shell-companies", "pep-kleptocracy", "real-estate"]
+backstory = """
+The Panama Papers (2016) were a leak of documents from Mossack Fonseca, a Panamanian
+law firm that incorporated offshore companies at scale. The Pandora Papers (2021) drew
+on records from multiple offshore service providers. Together they gave the public -
+and regulators - an unusually direct view of how opacity is manufactured.
+
+What the documents showed was less exotic than expected. The techniques were ordinary
+and industrialised: nominee directors and shareholders standing in for real owners,
+companies incorporated in bulk and held on the shelf, layers of entities across
+several jurisdictions so no single register reveals control, and bearer instruments.
+
+Crucially, most of this was done by regulated professionals - lawyers, accountants and
+company formation agents. Not all of it was illegal. The significance for AML is that
+the same machinery serves legitimate tax planning and serious criminal concealment, and
+the paperwork looks identical."""
+what_happened = """
+The leaks triggered investigations in many countries, resignations of political figures,
+tax recoveries running to billions, and prosecutions. They directly accelerated
+beneficial ownership registry reform - including the UK's register of overseas entities
+and the EU's beneficial ownership provisions - and sharpened scrutiny of trust and
+company service providers."""
+bank_impact = """
+For banks the practical consequence was that "a regulated professional introduced this
+client" stopped being an acceptable substitute for your own due diligence. The leaks
+showed regulated intermediaries constructing exactly the structures that defeat
+ownership transparency. Registry reform then gave institutions a source to check
+against - and an expectation that they will."""
+analyst_lesson = """
+Trace ownership to a natural person and record precisely where the chain goes cold and
+why. Nominee arrangements and multi-jurisdiction layering are the signal. And never
+treat an intermediary's assurance as verification - the enabler may be the risk."""
+[[case.sources]]
+title = "ICIJ - The Panama Papers investigation"
+url = "https://www.icij.org/investigations/panama-papers/"
+[[case.sources]]
+title = "ICIJ - The Pandora Papers investigation"
+url = "https://www.icij.org/investigations/pandora-papers/"
