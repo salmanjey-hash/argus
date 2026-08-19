@@ -1,4 +1,4 @@
-# ARGUS - typology reference library
+# ARGUS FINCRIME - typology reference library
 #
 # Single source of truth. `argus.py explain <id>` reads this, the news feed
 # cross-links to it, and the Streamlit app renders it.

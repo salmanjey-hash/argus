@@ -1,10 +1,10 @@
 @echo off
-REM Registers a Windows Scheduled Task to run Argus every weekday.
+REM Registers a Windows Scheduled Task to run Argus FinCrime every weekday.
 setlocal
 cd /d "%~dp0"
 
 echo.
-echo  This will create a Windows Scheduled Task called "Argus"
+echo  This will create a Windows Scheduled Task called "ArgusFinCrime"
 echo  that runs the daily fetch every weekday at 08:00.
 echo.
 echo  Folder: %~dp0
@@ -17,7 +17,7 @@ if /i not "%CONFIRM%"=="y" (
 )
 
 schtasks /create ^
-    /tn "Argus" ^
+    /tn "ArgusFinCrime" ^
     /tr "\"%~dp0run-quiet.cmd\"" ^
     /sc weekly ^
     /d MON,TUE,WED,THU,FRI ^
@@ -34,8 +34,8 @@ if errorlevel 1 (
 echo.
 echo  Done. The task runs every weekday at 08:00.
 echo.
-echo  Check it:   schtasks /query /tn Argus
-echo  Remove it:  schtasks /delete /tn Argus /f
+echo  Check it:   schtasks /query /tn ArgusFinCrime
+echo  Remove it:  schtasks /delete /tn ArgusFinCrime /f
 echo.
 pause
 endlocal

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Argus - AML/KYC regulatory and typology monitor.
+"""Argus FinCrime - AML/KYC regulatory and typology monitor.
 
 Zero dependencies (Python 3.11+ stdlib only). Zero API keys. Zero cost.
 
@@ -91,7 +91,7 @@ def cmd_fetch(args) -> int:
         print("No sources matched.")
         return 1
 
-    print(f"Argus - polling {len(sources)} source(s) - {stamp()}\n")
+    print(f"Argus FinCrime - polling {len(sources)} source(s) - {stamp()}\n")
 
     def report(r) -> None:
         if r.unchanged:
@@ -410,7 +410,7 @@ def cmd_app(args) -> int:
         return 1
     exe = shutil.which("streamlit")
     cmd = ([exe] if exe else [sys.executable, "-m", "streamlit"]) + ["run", str(app)]
-    print("Starting Argus... (Ctrl+C to stop)\n")
+    print("Starting Argus FinCrime... (Ctrl+C to stop)\n")
     return subprocess.call(cmd)
 
 
@@ -722,7 +722,7 @@ def cmd_brief(args) -> int:
 def main() -> int:
     p = argparse.ArgumentParser(
         prog="argus.py",
-        description="Argus - AML/KYC regulatory & typology monitor.",
+        description="Argus FinCrime - AML/KYC regulatory & typology monitor.",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=__doc__,
     )

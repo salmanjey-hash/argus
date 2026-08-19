@@ -1,11 +1,11 @@
 @echo off
-REM Argus - daily run. Safe to double-click.
+REM Argus FinCrime - daily run. Safe to double-click.
 setlocal
 cd /d "%~dp0"
 set PYTHONIOENCODING=utf-8
 
 echo.
-echo  Argus - daily run
+echo  Argus FinCrime - daily run
 echo  ==========================
 echo.
 

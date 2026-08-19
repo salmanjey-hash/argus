@@ -1,4 +1,4 @@
-"""Shared data access for the Argus Streamlit app.
+"""Shared data access for the Argus FinCrime Streamlit app.
 
 Pages stay thin; everything that touches disk or the network lives here so it
 can be cached in one place. The fetch itself goes through argus_core.pipeline,

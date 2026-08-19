@@ -66,7 +66,7 @@ def render_markdown(
 ) -> str:
     date_str = datetime.now(timezone.utc).strftime("%A %d %B %Y")
     L: list[str] = []
-    L.append(f"# Argus - {kind} digest")
+    L.append(f"# Argus FinCrime - {kind} digest")
     L.append(f"**{date_str}**  ·  {len(rows)} item(s)"
              + (f"  ·  {window_note}" if window_note else ""))
     L.append("")
@@ -221,7 +221,7 @@ def render_dashboard(
     rows: list[sqlite3.Row],
     generated: str,
     typology_names: dict[str, str],
-    title: str = "Argus",
+    title: str = "Argus FinCrime",
 ) -> str:
     e = html.escape
     parts: list[str] = []

@@ -1,4 +1,4 @@
-# Argus
+# Argus FinCrime
 
 **Financial crime intelligence, always watching.**
 
@@ -75,7 +75,7 @@ Items that describe a *method* — a typology, modus operandi, red flag or
 emerging trend — but match nothing in the library.
 
 Press **Draft from source** on any of them (or `python argus.py draft <id>`) and
-Argus fetches the full article and extracts the sentences describing a
+Argus FinCrime fetches the full article and extracts the sentences describing a
 mechanism, a red flag or an outcome — **verbatim, each tagged with its source
 URL** — into `drafts/<slug>.toml`.
 
@@ -240,11 +240,11 @@ Run `setup-schedule.cmd` once to register a Windows Scheduled Task that runs the
 headless daily fetch every weekday at 08:00.
 
 ```bash
-schtasks /query /tn Argus
+schtasks /query /tn ArgusFinCrime
 ```
 
 ```bash
-schtasks /delete /tn Argus /f
+schtasks /delete /tn ArgusFinCrime /f
 ```
 
 Nothing breaks if you skip it — the tool is stateful, so a manual run after a

@@ -204,7 +204,7 @@ padding:18px 20px;margin-bottom:14px;box-shadow:var(--shadow)}
     P: list[str] = []
     P.append("<!doctype html><html lang='en'><head><meta charset='utf-8'>")
     P.append("<meta name='viewport' content='width=device-width,initial-scale=1'>")
-    P.append("<title>FinCrime typology reference</title>")
+    P.append("<title>Argus FinCrime - typology reference</title>")
     P.append(f"<style>{_CSS}{extra}</style></head><body><div class='wrap'>")
     P.append("<h1>FinCrime typology reference</h1>")
     P.append(f"<div class='sub'>{len(lib)} typologies · generated {e(generated)} · "

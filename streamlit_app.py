@@ -1,4 +1,4 @@
-"""Argus — AML/KYC regulatory and financial crime intelligence.
+"""Argus FinCrime — AML/KYC regulatory and financial crime intelligence.
 
 Entry point. Run with:  python argus.py app     (or: streamlit run streamlit_app.py)
 """
@@ -8,7 +8,7 @@ from __future__ import annotations
 import streamlit as st
 
 st.set_page_config(
-    page_title="Argus — financial crime intelligence",
+    page_title="Argus FinCrime — financial crime intelligence",
     page_icon=":material/visibility:",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -44,7 +44,7 @@ page = st.navigation(pages, position="sidebar")
 
 # ------------------------------------------------------------------ sidebar
 with st.sidebar:
-    st.title(":material/visibility: Argus")
+    st.title(":material/visibility: Argus FinCrime")
     st.caption("Financial crime intelligence, always watching")
 
     s = sh.stats()
