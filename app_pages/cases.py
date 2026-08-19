@@ -1,4 +1,9 @@
-"""Case library — real, documented financial crime cases with their backstory."""
+"""Case library — real, documented financial crime cases with their backstory.
+
+Same performance shape as the typologies page: one case rendered in full,
+the rest as a compact list. Streamlit computes collapsed expander bodies
+anyway, so 15 full case write-ups per rerun was needless work.
+"""
 
 from __future__ import annotations
 
@@ -44,8 +49,7 @@ def keep(c: dict) -> bool:
     return True
 
 
-shown = [c for c in cases.values() if keep(c)]
-shown.sort(key=lambda c: c["year"])
+shown = sorted([c for c in cases.values() if keep(c)], key=lambda c: c["year"])
 
 st.caption(f"**{len(shown)}** of {len(cases)} cases")
 
@@ -53,38 +57,56 @@ if not shown:
     st.info("No case matches that search.", icon=":material/search_off:")
     st.stop()
 
-for c in shown:
-    with st.container(border=True):
-        st.markdown(f"### {c['name']}")
-        st.caption(f"{c['year']}  ·  {c['jurisdiction']}")
-        st.markdown(f"**{c['headline']}**")
+selected = st.selectbox(
+    "Open a case",
+    [c["id"] for c in shown],
+    format_func=lambda cid: f"{cases[cid]['name']}  ·  {cases[cid]['year']}",
+)
 
-        tags = st.container(horizontal=True, vertical_alignment="center")
-        with tags:
-            for t in c["typology_ids"]:
-                st.badge(typ_names.get(t, t), color="violet")
+c = cases[selected]
 
-        with st.expander("Read the full case"):
-            st.markdown("#### Backstory")
-            st.write(c["backstory"])
+with st.container(border=True):
+    st.subheader(c["name"])
+    st.caption(f"{c['year']}  ·  {c['jurisdiction']}")
+    st.markdown(f"**{c['headline']}**")
 
-            st.markdown("#### What happened")
-            st.write(c["what_happened"])
+    tags = st.container(horizontal=True, vertical_alignment="center")
+    with tags:
+        for t in c["typology_ids"]:
+            st.badge(typ_names.get(t, t), color="violet")
 
-            left, right = st.columns(2)
-            with left:
-                st.markdown("#### Impact on banks")
-                st.write(c["bank_impact"])
-            with right:
-                st.markdown("#### The analyst lesson")
-                st.write(c["analyst_lesson"])
+    st.markdown("#### Backstory")
+    st.write(c["backstory"])
 
-            if c.get("verify_note"):
-                st.warning(c["verify_note"], icon=":material/link_off:")
+    st.markdown("#### What happened")
+    st.write(c["what_happened"])
 
-            st.markdown("#### Sources")
-            links = st.container(horizontal=True, vertical_alignment="center")
-            with links:
-                for s in c["sources"]:
-                    st.link_button(s.get("title", "Source"), s.get("url", ""),
-                                   icon=":material/open_in_new:")
+    left, right = st.columns(2)
+    with left:
+        st.markdown("#### Impact on banks")
+        st.write(c["bank_impact"])
+    with right:
+        st.markdown("#### The analyst lesson")
+        st.write(c["analyst_lesson"])
+
+    if c.get("verify_note"):
+        st.warning(c["verify_note"], icon=":material/link_off:")
+
+    st.markdown("#### Sources")
+    links = st.container(horizontal=True, vertical_alignment="center")
+    with links:
+        for s in c["sources"]:
+            st.link_button(s.get("title", "Source"), s.get("url", ""),
+                           icon=":material/open_in_new:")
+
+st.subheader("All cases", divider="gray")
+st.caption("Pick one above to read it in full.")
+
+for x in shown:
+    tl = ", ".join(typ_names.get(t, t) for t in x["typology_ids"][:3])
+    st.markdown(
+        f"- **{x['name']}** · {x['year']} · {x['jurisdiction']}  \n"
+        f"  {x['headline']}  \n"
+        f"  <sub>{tl}</sub>",
+        unsafe_allow_html=True,
+    )

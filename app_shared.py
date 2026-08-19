@@ -75,6 +75,25 @@ def cases_for_typology(tid: str) -> list[dict]:
     return [c for c in load_cases().values() if tid in c["typology_ids"]]
 
 
+@st.cache_data(ttl=60, show_spinner=False)
+def typology_mentions(days: int = 60) -> dict[str, list[dict]]:
+    """Recent items grouped by the typology they matched.
+
+    Cached and trimmed: the typology page only ever shows the first handful,
+    and carrying every field of every item into that page was pure overhead.
+    """
+    idx: dict[str, list[dict]] = {}
+    for i in load_items(days=days, relevant_only=True):
+        for t in i["typologies"]:
+            if len(idx.setdefault(t, [])) < 12:
+                idx[t].append({
+                    "title": i["title"], "url": i["url"],
+                    "source_name": i["source_name"],
+                    "published_at": i.get("published_at"),
+                })
+    return idx
+
+
 # ------------------------------------------------------------------- database
 
 def _connect() -> sqlite3.Connection | None:
