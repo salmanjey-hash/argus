@@ -159,18 +159,40 @@ shown.sort(key=lambda i: (sh.PRIORITY_ORDER.get(i["priority"], 3), i.get("when")
            reverse=False)
 
 n_high = sum(1 for i in shown if i["priority"] == "High")
-st.caption(f"**{len(shown)}** item(s) · {n_high} high priority · newest first within each priority")
 
 if not shown:
+    st.caption("**0** items")
     st.info("Nothing matches those filters.", icon=":material/filter_alt_off:")
     st.stop()
 
+# ---------------------------------------------------------------- pagination
+# Each card is several elements, so rendering the whole result set put the
+# Streamlit Cloud container into a very long rerun. 25 a page keeps it snappy.
+PER_PAGE = 25
+pages = (len(shown) + PER_PAGE - 1) // PER_PAGE
+
+bar = st.container(horizontal=True, vertical_alignment="center")
+with bar:
+    st.markdown(f"**{len(shown)}** item(s) · {n_high} high priority · "
+                "highest priority first, then newest")
+    page = st.number_input(
+        "Page", min_value=1, max_value=max(pages, 1), value=1, step=1,
+        label_visibility="collapsed", width=110,
+    ) if pages > 1 else 1
+
+start = (int(page) - 1) * PER_PAGE
+batch = shown[start:start + PER_PAGE]
+if pages > 1:
+    st.caption(f"Showing {start + 1}–{start + len(batch)} of {len(shown)} "
+               f"(page {int(page)} of {pages})")
+
 # --------------------------------------------------------------------- feed
-for i in shown[:250]:
+for i in batch:
     with st.container(border=True):
-        head = st.container(horizontal=True, vertical_alignment="center")
-        with head:
-            st.markdown(f"**{i['title']}**")
+        # Markdown link rather than a link_button: one element instead of two,
+        # and it keeps the headline itself clickable.
+        st.markdown(f"#### [{i['title']}]({i['url']})")
+
         meta = [i["source_name"], sh.fmt_date(i.get("published_at"))]
         if i.get("publisher") and i["publisher"] not in i["source_name"]:
             meta.append(i["publisher"])
@@ -183,21 +205,13 @@ for i in shown[:250]:
         else:
             st.caption("_Source published no summary — open the link._")
 
-        tags = st.container(horizontal=True, vertical_alignment="center")
-        with tags:
-            st.badge(i["priority"],
-                     color="red" if i["priority"] == "High"
-                     else "orange" if i["priority"] == "Medium" else "gray")
-            st.badge(i["jurisdiction"], color="blue")
-            st.badge(i["category"], color="violet")
-            if i.get("has_deadline"):
-                st.badge("has a date/deadline", icon=":material/schedule:", color="orange")
-            st.link_button("Open source", i["url"], icon=":material/open_in_new:")
-
-        if i["typologies"]:
-            names = ", ".join(typ_names.get(t, t) for t in i["typologies"])
-            st.caption(f":material/account_tree: Related typology: **{names}** — "
-                       "see the Typologies page for red flags and how to spot it.")
-
-if len(shown) > 250:
-    st.caption(f"Showing the first 250 of {len(shown)}. Narrow the window or search to see more.")
+        # One markdown line of tags rather than several badge elements.
+        colour = {"High": "red", "Medium": "orange"}.get(i["priority"], "gray")
+        tags = [f":{colour}-badge[{i['priority']}]",
+                f":blue-badge[{i['jurisdiction']}]",
+                f":violet-badge[{i['category']}]"]
+        if i.get("has_deadline"):
+            tags.append(":orange-badge[:material/schedule: date/deadline]")
+        for t in i["typologies"]:
+            tags.append(f":gray-badge[:material/account_tree: {typ_names.get(t, t)}]")
+        st.markdown(" ".join(tags))
