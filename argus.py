@@ -44,11 +44,13 @@ from argus_core import fetch as F             # noqa: E402
 from argus_core import parse as P             # noqa: E402
 from argus_core import typology as T          # noqa: E402
 from argus_core import cases as CS            # noqa: E402
+from argus_core import drafter as DR          # noqa: E402
 from argus_core.store import Store, dedupe_by_url, fingerprint, now_iso  # noqa: E402
 
 FEEDS = ROOT / "feeds.toml"
 TYPOLOGIES = ROOT / "typologies.toml"
 CASES = ROOT / "cases.toml"
+DRAFTS = ROOT / "drafts"
 DB = ROOT / "data" / "argus.db"
 DIGEST_DIR = ROOT / "digests"
 
@@ -412,6 +414,131 @@ def cmd_app(args) -> int:
     return subprocess.call(cmd)
 
 
+# -------------------------------------------------------------------- draft
+
+def cmd_draft(args) -> int:
+    """Build a quote-anchored draft typology entry from a source item.
+
+    Extraction, not generation: every line it writes is a verbatim sentence
+    from the fetched source, stored with the URL it came from.
+    """
+    store = Store(DB)
+    row = store.get_item(args.id)
+    store.close()
+    if not row:
+        print(f"No item with id {args.id}. Find one with "
+              f"`python argus.py candidates` or `python argus.py search <term>`.")
+        return 1
+
+    print(f"Fetching {row['url']} ...\n")
+    d = DR.build_draft(
+        title=row["title"], url=row["url"], source_name=row["source_name"],
+        published=row["published_at"],
+    )
+    print(DR.to_text(d))
+
+    if d.fetch_error or not d.total:
+        return 1
+
+    DRAFTS.mkdir(exist_ok=True)
+    path = DRAFTS / f"{d.slug}.toml"
+    path.write_text(DR.to_toml(d), encoding="utf-8")
+    print(f"\nDraft written to {path}")
+    print(f"Fill in the empty fields, then: python argus.py promote {d.slug}")
+    return 0
+
+
+def cmd_promote(args) -> int:
+    """Append a completed draft to typologies.toml."""
+    import tomllib
+
+    path = DRAFTS / f"{args.slug}.toml"
+    if not path.exists():
+        print(f"No draft at {path}")
+        if DRAFTS.exists():
+            found = sorted(p.stem for p in DRAFTS.glob("*.toml"))
+            if found:
+                print("\nAvailable drafts:")
+                for f in found:
+                    print(f"  {f}")
+        return 1
+
+    try:
+        data = tomllib.load(open(path, "rb"))
+    except Exception as e:  # noqa: BLE001
+        print(f"{path} is not valid TOML yet: {e}")
+        return 1
+
+    e = data.get("draft", {}).get("entry", {})
+    missing = [k for k in ("id", "name", "family", "summary", "bank_impact")
+               if not str(e.get(k, "")).strip()]
+    for k in ("how_to_spot", "keywords", "analyst_actions"):
+        if not e.get(k):
+            missing.append(k)
+    # If the source yielded no mechanic quotes, the analyst must write them -
+    # an empty "how it works" section is worse than no entry.
+    ev_all = data.get("draft", {}).get("evidence", [])
+    if not e.get("mechanics") and not [x for x in ev_all if x.get("kind") == "mechanic"]:
+        missing.append("mechanics (no mechanic quotes were extracted)")
+    if not e.get("red_flags") and not [x for x in ev_all if x.get("kind") == "red_flag"]:
+        missing.append("red_flags (no red-flag quotes were extracted)")
+    if missing:
+        print("This draft is not finished. Still empty:")
+        for m in missing:
+            print(f"  - {m}")
+        print(f"\nEdit {path}, then run promote again.")
+        print("Nothing is auto-filled: those fields are your analysis, not the "
+              "tool's.")
+        return 1
+
+    lib = T.load(TYPOLOGIES)
+    if e["id"] in lib:
+        print(f"Typology id '{e['id']}' already exists in typologies.toml.")
+        return 1
+
+    ev = data.get("draft", {}).get("evidence", [])
+    mech = [x["quote"] for x in ev if x.get("kind") == "mechanic"]
+    flags = [x["quote"] for x in ev if x.get("kind") == "red_flag"]
+    src_url = data["draft"]["url"]
+    src_name = data["draft"]["source_name"]
+
+    def q(s):
+        return '"' + str(s).replace("\\", "\\\\").replace('"', '\\"') + '"'
+
+    def arr(items):
+        if not items:
+            return "[]"
+        return "[\n" + "".join(f"  {q(i)},\n" for i in items) + "]"
+
+    block = ["", "# " + "-" * 74, "[[typology]]",
+             f"id = {q(e['id'])}", f"name = {q(e['name'])}",
+             f"aka = {arr(e.get('aka', []))}", f"family = {q(e['family'])}",
+             f'summary = """\n{e["summary"].strip()}"""',
+             f"mechanics = {arr(e.get('mechanics') or mech)}",
+             f'bank_impact = """\n{e["bank_impact"].strip()}"""',
+             f"red_flags = {arr(e.get('red_flags') or flags)}",
+             f"how_to_spot = {arr(e['how_to_spot'])}",
+             f"analyst_actions = {arr(e['analyst_actions'])}",
+             f"keywords = {arr(e['keywords'])}",
+             "[[typology.sources]]",
+             f"title = {q(src_name)}", f"url = {q(src_url)}", ""]
+
+    with open(TYPOLOGIES, "a", encoding="utf-8") as fh:
+        fh.write("\n".join(block))
+
+    try:
+        check = T.load(TYPOLOGIES)
+    except Exception as err:  # noqa: BLE001
+        print(f"{_c('typologies.toml is now invalid:', '31')} {err}")
+        print("Undo the appended block at the end of the file.")
+        return 1
+
+    print(f"{_c('Promoted', '32;1')} '{e['id']}' - library now has {len(check)} typologies.")
+    path.rename(path.with_suffix(".toml.promoted"))
+    print("Now run: python argus.py reclassify   (tags past items against it)")
+    return 0
+
+
 # ------------------------------------------------------------------- verify
 
 def _verdict(code: int) -> tuple[str, str, bool]:
@@ -650,6 +777,15 @@ def main() -> int:
     cd.add_argument("--days", type=int, default=60)
     cd.add_argument("--limit", type=int, default=40)
     cd.set_defaults(func=cmd_candidates)
+
+    dr = sub.add_parser("draft",
+                        help="build a quote-anchored draft typology from an item")
+    dr.add_argument("id", type=int, help="item id (see `candidates` or `search`)")
+    dr.set_defaults(func=cmd_draft)
+
+    pr = sub.add_parser("promote", help="append a finished draft to the library")
+    pr.add_argument("slug")
+    pr.set_defaults(func=cmd_promote)
 
     ap = sub.add_parser("app", help="launch the Streamlit app")
     ap.set_defaults(func=cmd_app)

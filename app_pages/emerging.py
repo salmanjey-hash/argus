@@ -15,11 +15,16 @@ st.caption(
 
 with st.container(border=True):
     st.markdown(
-        "**Why this is a queue and not automatic.** Argus can reliably tell you "
-        "*\"this item is describing a technique we hold nothing on\"* by matching "
-        "language patterns. It cannot responsibly write a typology entry by itself — "
-        "that would mean generating content, which is exactly what the rest of this "
-        "tool avoids. You read the source, decide if it is genuinely new, and add it."
+        "**How the drafting works.** Press *Draft from source* on any item and Argus "
+        "fetches the full article and pulls out the sentences that describe a "
+        "mechanism, a red flag or an outcome — **verbatim, each with its source URL**. "
+        "It writes those into a draft file for you.\n\n"
+        "It quotes; it does not paraphrase. A model writing *\"criminals typically "
+        "structure below £10,000\"* from memory can be wrong about the threshold, the "
+        "country or the year. A sentence quoted out of an FCA notice cannot be wrong "
+        "about what the FCA said. The analysis fields — what it is, impact on banks, "
+        "how to spot it — stay empty for you to write, and `promote` refuses a draft "
+        "until they are filled."
     )
 
 row = st.container(horizontal=True, vertical_alignment="bottom")
@@ -54,6 +59,36 @@ for r in rows:
             for s in r["signals"][:5]:
                 st.badge(s, color="orange")
             st.link_button("Open source", r["url"], icon=":material/open_in_new:")
+            drafted = st.button("Draft from source", key=f"draft{r['id']}",
+                                icon=":material/edit_note:")
+
+        if drafted:
+            with st.spinner("Fetching the source and pulling quotes…"):
+                d = sh.draft_from_item(r)
+            if d.get("error"):
+                st.error(f"Could not fetch the source: {d['error']}", icon=":material/error:")
+            elif not d["total"]:
+                st.warning(
+                    "Fetched, but no sentence matched a mechanism, red-flag or "
+                    "outcome pattern — usually that means it is a landing page "
+                    "rather than an article. Open the source and read it.",
+                    icon=":material/info:",
+                )
+            else:
+                st.success(f"Draft saved to `drafts/{d['slug']}.toml` — "
+                           f"{d['total']} quoted line(s).", icon=":material/check_circle:")
+                for label, key in (("How it worked", "mechanics"),
+                                   ("Red flags / failings", "red_flags"),
+                                   ("Outcome", "outcomes")):
+                    if d[key]:
+                        st.markdown(f"**{label}** — quoted verbatim")
+                        for qt in d[key]:
+                            st.markdown(f"> {qt}")
+                st.caption(
+                    f"Every line above is verbatim from {r['url']}. Fill in the "
+                    f"analysis fields in the draft file, then run "
+                    f"`python argus.py promote {d['slug']}`."
+                )
 
 st.divider()
 with st.expander("How to add a new typology"):

@@ -161,6 +161,36 @@ def refresh(daily_only: bool = True, progress=None) -> PL.RunResult:
     return out
 
 
+# --------------------------------------------------------------------- draft
+
+DRAFTS = ROOT / "drafts"
+
+
+def draft_from_item(item: dict) -> dict:
+    """Build a quote-anchored draft from a collected item and save it.
+
+    Extraction only - every returned line is verbatim from the fetched source.
+    """
+    from argus_core import drafter as DR
+
+    d = DR.build_draft(
+        title=item["title"], url=item["url"],
+        source_name=item["source_name"], published=item.get("published_at"),
+    )
+    out = {
+        "slug": d.slug,
+        "error": d.fetch_error,
+        "total": d.total,
+        "mechanics": [e.quote for e in d.mechanics],
+        "red_flags": [e.quote for e in d.red_flags],
+        "outcomes": [e.quote for e in d.outcomes],
+    }
+    if not d.fetch_error and d.total:
+        DRAFTS.mkdir(exist_ok=True)
+        (DRAFTS / f"{d.slug}.toml").write_text(DR.to_toml(d), encoding="utf-8")
+    return out
+
+
 # --------------------------------------------------------------------- format
 
 def ago(iso: str | None) -> str:

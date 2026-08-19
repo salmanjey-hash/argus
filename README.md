@@ -68,15 +68,37 @@ Fort, Wachovia, the Panama and Pandora Papers, Tornado Cash, and more. Each
 gives you backstory, what happened, impact on banks, the analyst lesson, and
 primary sources.
 
-### 4. New & emerging
+### 4. New & emerging — with quote-anchored drafting
 Items that describe a *method* — a typology, modus operandi, red flag or
-emerging trend — but match nothing in the library. A review queue for you.
+emerging trend — but match nothing in the library.
 
-**It deliberately does not auto-write typology entries.** Argus can reliably
-tell you "this is describing a technique we hold nothing on" by matching
-language patterns. Writing the entry itself would mean generating content,
-which is exactly what the rest of this tool avoids. You read the source, decide
-if it's genuinely new, and add it.
+Press **Draft from source** on any of them (or `python argus.py draft <id>`) and
+Argus fetches the full article and extracts the sentences describing a
+mechanism, a red flag or an outcome — **verbatim, each tagged with its source
+URL** — into `drafts/<slug>.toml`.
+
+**It quotes; it does not paraphrase.** That distinction is the whole safety
+argument. A model writing *"criminals typically structure below £10,000"* from
+memory can be wrong about the threshold, the jurisdiction or the year. A
+sentence quoted out of an FCA notice cannot be wrong about what the FCA said —
+at worst it's quoted out of context, and the context is retrievable because the
+URL travels with the quote.
+
+The analysis fields — what it is, impact on banks, how to spot it, keywords —
+are left **empty for you**. Those are judgement, not extraction, and the tool
+will not fake them. `promote` refuses a draft until they're filled:
+
+```bash
+python argus.py draft 412
+```
+
+```bash
+python argus.py promote sanctions-enforcement-action
+```
+
+`promote` appends the finished entry to `typologies.toml`, validates that the
+file still parses, and tells you to run `reclassify` so past items get tagged
+against the new typology.
 
 ### 5. Sources
 Which sources are responding, which are failing, and why.
@@ -128,6 +150,8 @@ python argus.py explain tbml        # explain one, with red flags and detection
 python argus.py cases               # list documented cases
 python argus.py cases danske-estonia
 python argus.py candidates          # possible new typologies to review
+python argus.py draft 412           # quote-anchored draft from item 412
+python argus.py promote <slug>      # append a finished draft to the library
 python argus.py search "shell company"
 python argus.py why 412             # why did item 412 score that way?
 python argus.py health              # per-source fetch health
@@ -248,9 +272,11 @@ argus_core/
   digest.py           Markdown digest + HTML dashboard
   typology.py         typology loading and rendering
   cases.py            case library
+  drafter.py          quote-anchored draft extraction
 feeds.toml            25 active sources, 3 disabled with reasons
 typologies.toml       25 typologies
 cases.toml            15 documented cases
+drafts/               work-in-progress typology drafts (gitignored)
 data/argus.db         SQLite (gitignored)
 digests/              dated Markdown digests (gitignored)
 ```
